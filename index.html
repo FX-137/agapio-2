@@ -483,15 +483,13 @@ async function carregarPrecosDaPlanilha() {
                     </div>`;
             }
         }
-        // --- MOTOR DA PLANILHA (ADICIONAR NO FINAL DO SCRIPT) ---
+       // --- MOTOR DA PLANILHA (VERSÃO CORRIGIDA) ---
 async function carregarPrecosDaPlanilha() {
-    // Link CSV da sua planilha Agapio-2
     const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGIhoSDls3007249Zz4CJJG9Njcuw2NS_PzBM_10uxARRW2u85XWkHrq4rV2pylxa9Tw5IuV9NcUfY/pub?gid=880927247&single=true&output=csv';
     
     try {
         const response = await fetch(SHEET_URL);
         const text = await response.text();
-        // Divide as linhas e remove a primeira (cabeçalho)
         const linhas = text.split('\n').filter(l => l.trim() !== '').slice(1);
         
         let novosDados = [
@@ -501,7 +499,6 @@ async function carregarPrecosDaPlanilha() {
         ];
 
         linhas.forEach((linha, index) => {
-            // Separa colunas lidando com possíveis vírgulas dentro de aspas
             const col = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
             if (col.length >= 3) {
                 const catRaw = col[0].trim().toLowerCase();
@@ -513,22 +510,38 @@ async function carregarPrecosDaPlanilha() {
                     image: col[4] ? col[4].trim().replace(/"/g, '') : ""
                 };
 
-                // O uso de .includes('bebida') faz com que aceite "bebidas" da sua planilha
-                if (catRaw.includes('pedido')) novosDados[0].items.push(item);
-                else if (catRaw.includes('bebida')) novosDados[2].items.push(item);
-                else novosDados[1].items.push(item);
+                // Lógica de separação corrigida
+                if (catRaw.includes('pedido')) {
+                    novosDados[0].items.push(item);
+                } else if (catRaw.includes('bebida')) {
+                    novosDados[2].items.push(item); // Envia para a seção de Bebidas
+                } else {
+                    novosDados[1].items.push(item);
+                }
             }
         });
 
-        // Se encontrou itens, atualiza o cardápio
+        // Só atualiza se encontrar dados válidos
         if(novosDados[1].items.length > 0 || novosDados[2].items.length > 0) {
             MENU_DATA = novosDados;
-            if (typeof renderMenu === 'function') renderMenu(); 
+            // Verifica se a função renderMenu existe antes de chamar
+            if (typeof renderMenu === 'function') {
+                renderMenu();
+            }
         }
     } catch (e) {
-        console.log("Erro ao acessar planilha, usando dados locais.");
+        console.error("Erro ao carregar planilha:", e);
     }
 }
+
+// INICIALIZAÇÃO SEGURA (Isso evita o erro do seu print)
+setTimeout(() => {
+    if (typeof renderMenu === 'function') {
+        renderMenu();
+        updateCartUI();
+        carregarPrecosDaPlanilha();
+    }
+}, 500); // Aguarda meio segundo para garantir que tudo carregou
 
 // INICIALIZAÇÃO: Chama as funções na ordem correta após o site carregar
 window.addEventListener('DOMContentLoaded', () => {
