@@ -483,7 +483,7 @@ async function carregarPrecosDaPlanilha() {
                     </div>`;
             }
         }
-       // --- MOTOR DA PLANILHA (VERSÃO CORRIGIDA) ---
+       // --- MOTOR DA PLANILHA (VERSÃO FINAL E SEGURA) ---
 async function carregarPrecosDaPlanilha() {
     const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGIhoSDls3007249Zz4CJJG9Njcuw2NS_PzBM_10uxARRW2u85XWkHrq4rV2pylxa9Tw5IuV9NcUfY/pub?gid=880927247&single=true&output=csv';
     
@@ -510,21 +510,20 @@ async function carregarPrecosDaPlanilha() {
                     image: col[4] ? col[4].trim().replace(/"/g, '') : ""
                 };
 
-                // Lógica de separação corrigida
+                // Identifica "bebidas" ou "bebida" da tua planilha
                 if (catRaw.includes('pedido')) {
                     novosDados[0].items.push(item);
                 } else if (catRaw.includes('bebida')) {
-                    novosDados[2].items.push(item); // Envia para a seção de Bebidas
+                    novosDados[2].items.push(item);
                 } else {
                     novosDados[1].items.push(item);
                 }
             }
         });
 
-        // Só atualiza se encontrar dados válidos
+        // Só substitui se a planilha tiver dados reais
         if(novosDados[1].items.length > 0 || novosDados[2].items.length > 0) {
             MENU_DATA = novosDados;
-            // Verifica se a função renderMenu existe antes de chamar
             if (typeof renderMenu === 'function') {
                 renderMenu();
             }
@@ -534,23 +533,18 @@ async function carregarPrecosDaPlanilha() {
     }
 }
 
-// INICIALIZAÇÃO SEGURA (Isso evita o erro do seu print)
-setTimeout(() => {
+// INICIALIZAÇÃO BLINDADA: Tenta rodar logo e repete após meio segundo se falhar
+function iniciarTudo() {
     if (typeof renderMenu === 'function') {
         renderMenu();
         updateCartUI();
         carregarPrecosDaPlanilha();
+    } else {
+        setTimeout(iniciarTudo, 500);
     }
-}, 500); // Aguarda meio segundo para garantir que tudo carregou
+}
 
-// INICIALIZAÇÃO: Chama as funções na ordem correta após o site carregar
-window.addEventListener('DOMContentLoaded', () => {
-    if (typeof renderMenu === 'function') {
-        renderMenu();
-        updateCartUI();
-        carregarPrecosDaPlanilha(); // Tenta atualizar com os dados da nuvem
-    }
-});
+iniciarTudo();
 
         function closeModal() {
             document.getElementById('legal-modal').classList.add('hidden');
