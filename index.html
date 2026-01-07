@@ -483,14 +483,15 @@ async function carregarPrecosDaPlanilha() {
                     </div>`;
             }
         }
-       // --- MOTOR DA PLANILHA (VERSÃO FINAL E SEGURA) ---
+       // --- MOTOR DA PLANILHA (VERSÃO INTELIGENTE) ---
 async function carregarPrecosDaPlanilha() {
     const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGIhoSDls3007249Zz4CJJG9Njcuw2NS_PzBM_10uxARRW2u85XWkHrq4rV2pylxa9Tw5IuV9NcUfY/pub?gid=880927247&single=true&output=csv';
     
     try {
         const response = await fetch(SHEET_URL);
         const text = await response.text();
-        const linhas = text.split('\n').filter(l => l.trim() !== '').slice(1);
+        // Limpa espaços extras e linhas vazias
+        const linhas = text.split('\n').map(l => l.trim()).filter(l => l !== '').slice(1);
         
         let novosDados = [
             { id: "mais_pedidos", title: "Lanches Mais Pedidos", items: [] },
@@ -501,16 +502,17 @@ async function carregarPrecosDaPlanilha() {
         linhas.forEach((linha, index) => {
             const col = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
             if (col.length >= 3) {
-                const catRaw = col[0].trim().toLowerCase();
+                // Remove aspas e espaços extras da categoria
+                const catRaw = col[0].replace(/"/g, '').trim().toLowerCase();
                 const item = {
                     id: 'p' + index,
-                    name: col[1].trim().replace(/"/g, ''),
+                    name: col[1].replace(/"/g, '').trim(),
                     price: parseFloat(col[2].replace(/"/g, '').replace(',', '.')),
-                    description: col[3] ? col[3].trim().replace(/"/g, '') : "",
-                    image: col[4] ? col[4].trim().replace(/"/g, '') : ""
+                    description: col[3] ? col[3].replace(/"/g, '').trim() : "",
+                    image: col[4] ? col[4].replace(/"/g, '').trim() : ""
                 };
 
-                // Identifica "bebidas" ou "bebida" da tua planilha
+                // Lógica de busca mais flexível
                 if (catRaw.includes('pedido')) {
                     novosDados[0].items.push(item);
                 } else if (catRaw.includes('bebida')) {
@@ -521,30 +523,30 @@ async function carregarPrecosDaPlanilha() {
             }
         });
 
-        // Só substitui se a planilha tiver dados reais
+        // Só atualiza o site se encontrar itens na planilha
         if(novosDados[1].items.length > 0 || novosDados[2].items.length > 0) {
             MENU_DATA = novosDados;
-            if (typeof renderMenu === 'function') {
-                renderMenu();
-            }
+            console.log("Planilha carregada com sucesso!");
+            if (typeof renderMenu === 'function') renderMenu();
         }
     } catch (e) {
-        console.error("Erro ao carregar planilha:", e);
+        console.error("Erro ao ler planilha:", e);
     }
 }
 
-// INICIALIZAÇÃO BLINDADA: Tenta rodar logo e repete após meio segundo se falhar
-function iniciarTudo() {
-    if (typeof renderMenu === 'function') {
+// Inicialização garantida
+function iniciarSite() {
+    if (typeof renderMenu === 'function' && typeof updateCartUI === 'function') {
         renderMenu();
         updateCartUI();
         carregarPrecosDaPlanilha();
     } else {
-        setTimeout(iniciarTudo, 500);
+        // Se as funções ainda não carregaram, tenta de novo em 300ms
+        setTimeout(iniciarSite, 300);
     }
 }
 
-iniciarTudo();
+iniciarSite();
 
         function closeModal() {
             document.getElementById('legal-modal').classList.add('hidden');
