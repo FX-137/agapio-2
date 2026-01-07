@@ -192,50 +192,57 @@ const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGIhoSDls300
 async function carregarCardapio() {
     try {
         const response = await fetch(SHEET_URL);
-        const data = await response.text();
+        const text = await response.text();
         
-        // Divide o texto por linhas e pula o cabeçalho
-        const linhas = data.split('\n').slice(1);
+        // Converte CSV em Array, removendo linhas vazias
+        const linhas = text.split('\n').filter(linha => linha.trim() !== '').slice(1);
         
         const containerLanches = document.getElementById('tab-lanches');
         const containerBebidas = document.getElementById('tab-bebidas');
-        
-        containerLanches.innerHTML = '';
-        containerBebidas.innerHTML = '';
+        const containerPorcoes = document.getElementById('tab-porcoes');
+
+        if(containerLanches) containerLanches.innerHTML = '';
+        if(containerBebidas) containerBebidas.innerHTML = '';
+        if(containerPorcoes) containerPorcoes.innerHTML = '';
 
         linhas.forEach(linha => {
-            // Separa os dados por vírgula
-            const colunas = linha.split(',');
-            if (colunas.length < 3) return;
+            // Divide a linha considerando que pode haver vírgulas dentro de aspas (descrições longas)
+            const colunas = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            
+            if (colunas.length >= 3) {
+                const categoria = colunas[0].trim().toLowerCase();
+                const nome = colunas[1].trim().replace(/"/g, '');
+                const preco = parseFloat(colunas[2].replace(/"/g, '').replace(',', '.'));
+                const descricao = colunas[3] ? colunas[3].trim().replace(/"/g, '') : "";
+                const imagem = colunas[4] ? colunas[4].trim().replace(/"/g, '') : "";
 
-            const categoria = colunas[0].trim().toLowerCase();
-            const nome = colunas[1].trim();
-            const preco = parseFloat(colunas[2]);
-            const descricao = colunas[3] ? colunas[3].trim() : "";
-
-            if (nome && !isNaN(preco)) {
                 const htmlBotao = `
-                    <button onclick="selectItem('${nome}', ${preco}, '${categoria === 'lanches' ? 'lanche' : 'bebida'}')" 
-                            class="btn-option p-4 rounded-xl flex justify-between bg-gray-50 shadow-sm border border-gray-100 italic">
-                        <div class="text-left">
+                    <button onclick="selectItem('${nome}', ${preco}, '${categoria.includes('bebida') ? 'bebida' : 'lanche'}')" 
+                            class="btn-option p-4 rounded-xl flex items-center gap-4 bg-gray-50 shadow-sm border border-gray-100 italic mb-2">
+                        ${imagem ? `<img src="${imagem}" class="w-14 h-14 rounded-lg object-cover">` : ''}
+                        <div class="flex-1 text-left">
                             <p class="font-bold text-slate-800">${nome}</p>
-                            <p class="text-[10px] text-gray-400 font-medium">${descricao}</p>
+                            <p class="text-[10px] text-gray-400 font-medium leading-tight">${descricao}</p>
                         </div>
                         <span class="font-black text-[#E7252A] ml-2">R$ ${preco.toFixed(2).replace('.', ',')}</span>
                     </button>`;
 
-                // Verifica a categoria para saber onde colocar o botão
                 if (categoria.includes('lanche')) {
-                    containerLanches.innerHTML += htmlBotao;
+                    if(containerLanches) containerLanches.innerHTML += htmlBotao;
                 } else if (categoria.includes('bebida')) {
-                    containerBebidas.innerHTML += htmlBotao;
+                    if(containerBebidas) containerBebidas.innerHTML += htmlBotao;
+                } else if (categoria.includes('porç')) {
+                    if(containerPorcoes) containerPorcoes.innerHTML += htmlBotao;
                 }
             }
         });
     } catch (error) {
-        console.error("Erro ao carregar os dados da planilha:", error);
+        console.error("Erro ao carregar cardápio:", error);
     }
 }
+
+// Chame a função no final do seu script
+carregarCardapio();
 
 // Inicia o carregamento assim que a página abre
 window.addEventListener('DOMContentLoaded', carregarCardapio);
