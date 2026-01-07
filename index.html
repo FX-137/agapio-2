@@ -483,52 +483,61 @@ async function carregarPrecosDaPlanilha() {
                     </div>`;
             }
         }
-        // --- MOTOR DA PLANILHA (ADICIONADO) ---
-        async function carregarPrecosDaPlanilha() {
-            const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGIhoSDls3007249Zz4CJJG9Njcuw2NS_PzBM_10uxARRW2u85XWkHrq4rV2pylxa9Tw5IuV9NcUfY/pub?gid=880927247&single=true&output=csv';
-            
-            try {
-                const response = await fetch(SHEET_URL);
-                const text = await response.text();
-                const linhas = text.split('\n').filter(l => l.trim() !== '').slice(1);
-                
-                let novosDados = [
-                    { id: "mais_pedidos", title: "Lanches Mais Pedidos", items: [] },
-                    { id: "xis_tradicionais", title: "Lanches Tradicionais", items: [] },
-                    { id: "bebidas", title: "Bebidas", items: [] }
-                ];
+        // --- MOTOR DA PLANILHA (ADICIONAR NO FINAL DO SCRIPT) ---
+async function carregarPrecosDaPlanilha() {
+    // Link CSV da sua planilha Agapio-2
+    const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGIhoSDls3007249Zz4CJJG9Njcuw2NS_PzBM_10uxARRW2u85XWkHrq4rV2pylxa9Tw5IuV9NcUfY/pub?gid=880927247&single=true&output=csv';
+    
+    try {
+        const response = await fetch(SHEET_URL);
+        const text = await response.text();
+        // Divide as linhas e remove a primeira (cabeçalho)
+        const linhas = text.split('\n').filter(l => l.trim() !== '').slice(1);
+        
+        let novosDados = [
+            { id: "mais_pedidos", title: "Lanches Mais Pedidos", items: [] },
+            { id: "xis_tradicionais", title: "Lanches Tradicionais", items: [] },
+            { id: "bebidas", title: "Bebidas", items: [] }
+        ];
 
-                linhas.forEach((linha, index) => {
-                    const col = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    if (col.length >= 3) {
-                        const catRaw = col[0].trim().toLowerCase();
-                        const item = {
-                            id: 'p' + index,
-                            name: col[1].trim().replace(/"/g, ''),
-                            price: parseFloat(col[2].replace(/"/g, '').replace(',', '.')),
-                            description: col[3] ? col[3].trim().replace(/"/g, '') : "",
-                            image: col[4] ? col[4].trim().replace(/"/g, '') : ""
-                        };
+        linhas.forEach((linha, index) => {
+            // Separa colunas lidando com possíveis vírgulas dentro de aspas
+            const col = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            if (col.length >= 3) {
+                const catRaw = col[0].trim().toLowerCase();
+                const item = {
+                    id: 'p' + index,
+                    name: col[1].trim().replace(/"/g, ''),
+                    price: parseFloat(col[2].replace(/"/g, '').replace(',', '.')),
+                    description: col[3] ? col[3].trim().replace(/"/g, '') : "",
+                    image: col[4] ? col[4].trim().replace(/"/g, '') : ""
+                };
 
-                        if (catRaw.includes('pedido')) novosDados[0].items.push(item);
-                        else if (catRaw.includes('bebida')) novosDados[2].items.push(item);
-                        else novosDados[1].items.push(item);
-                    }
-                });
-
-                if(novosDados[0].items.length > 0 || novosDados[1].items.length > 1) {
-                    MENU_DATA = novosDados;
-                    renderMenu(); 
-                }
-            } catch (e) {
-                console.log("Mantendo dados locais.");
+                // O uso de .includes('bebida') faz com que aceite "bebidas" da sua planilha
+                if (catRaw.includes('pedido')) novosDados[0].items.push(item);
+                else if (catRaw.includes('bebida')) novosDados[2].items.push(item);
+                else novosDados[1].items.push(item);
             }
-        }
+        });
 
-        // --- INICIALIZAÇÃO FINAL ---
+        // Se encontrou itens, atualiza o cardápio
+        if(novosDados[1].items.length > 0 || novosDados[2].items.length > 0) {
+            MENU_DATA = novosDados;
+            if (typeof renderMenu === 'function') renderMenu(); 
+        }
+    } catch (e) {
+        console.log("Erro ao acessar planilha, usando dados locais.");
+    }
+}
+
+// INICIALIZAÇÃO: Chama as funções na ordem correta após o site carregar
+window.addEventListener('DOMContentLoaded', () => {
+    if (typeof renderMenu === 'function') {
         renderMenu();
         updateCartUI();
-        carregarPrecosDaPlanilha();
+        carregarPrecosDaPlanilha(); // Tenta atualizar com os dados da nuvem
+    }
+});
 
         function closeModal() {
             document.getElementById('legal-modal').classList.add('hidden');
