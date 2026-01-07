@@ -270,23 +270,100 @@ window.addEventListener('DOMContentLoaded', carregarCardapio);
             document.getElementById('maps-iframe').src = `https://maps.google.com/maps?q=${BUSINESS_INFO.googleMapsQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
             document.getElementById('maps-link').href = `https://www.google.com/maps/search/?api=1&query=${BUSINESS_INFO.googleMapsQuery}`;
 
-            // Render Menu
-            const menuContainer = document.getElementById('menu-container');
-            MENU_DATA.forEach(category => {
-                const section = document.createElement('section');
-                section.id = category.id;
-                section.innerHTML = `
-                    <div class="bg-[#E7252A] rounded-lg shadow-md mb-4 py-2 px-4 text-center border-2 border-[#C01E22]">
-                        <h2 class="text-2xl md:text-3xl font-black text-[#EED117] uppercase tracking-wider drop-shadow-sm">${category.title}</h2>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 items-stretch">
-                        ${category.items.map(item => `
-                            <div onclick="orderItem('${item.id}')" class="flex flex-col h-full cursor-pointer group relative bg-[#EED117] border-2 border-[#E7252A] rounded-lg p-3 pt-4 shadow-[2px_2px_0px_rgba(231,37,42,0.2)] hover:shadow-[4px_4px_0px_rgba(231,37,42,0.4)] hover:bg-[#FEF08A] hover:-translate-y-1.5 transition-all duration-200">
-                                ${item.image ? `
-                                    <div class="w-full h-64 md:h-96 mb-3 overflow-hidden rounded border-2 border-[#E7252A] relative">
-                                        ${category.id === 'mais_pedidos' ? `<div class="absolute top-2 right-2 bg-[#E7252A] text-[#EED117] text-[10px] font-black px-2 py-0.5 rounded shadow-md border border-[#EED117] z-10 uppercase tracking-wide">Mais Pedido</div>` : ''}
-                                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"/>
-                                    </div>
+           // Link da sua planilha (CSV)
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRGIhoSDls3007249Zz4CJJG9Njcuw2NS_PzBM_10uxARRW2u85XWkHrq4rV2pylxa9Tw5IuV9NcUfY/pub?gid=880927247&single=true&output=csv';
+
+async function carregarCardapio() {
+    try {
+        const response = await fetch(SHEET_URL);
+        const text = await response.text();
+        
+        // Converte o CSV em linhas, ignorando a primeira (cabeçalho)
+        const linhas = text.split('\n').filter(l => l.trim() !== '').slice(1);
+        const menuContainer = document.getElementById('menu-container');
+        
+        if (!menuContainer) return;
+        menuContainer.innerHTML = ''; // Limpa o carregando...
+
+        // Organizador por categoria
+        const categorias = {
+            "mais_pedidos": { title: "Lanches Mais Pedidos", items: [] },
+            "lanches": { title: "Lanches Tradicionais", items: [] },
+            "bebidas": { title: "Bebidas", items: [] }
+        };
+
+        // Processa os dados da planilha
+        linhas.forEach((linha, index) => {
+            const colunas = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            if (colunas.length >= 3) {
+                const catKey = colunas[0].trim().toLowerCase();
+                const item = {
+                    id: 'item_' + index,
+                    name: colunas[1].trim().replace(/"/g, ''),
+                    price: parseFloat(colunas[2].replace(/"/g, '').replace(',', '.')),
+                    description: colunas[3] ? colunas[3].trim().replace(/"/g, '') : "",
+                    image: colunas[4] ? colunas[4].trim().replace(/"/g, '') : ""
+                };
+
+                // Adiciona na categoria correta
+                if (catKey.includes('pedido')) categorias.mais_pedidos.items.push(item);
+                else if (catKey.includes('bebida')) categorias.bebidas.items.push(item);
+                else categorias.lanches.items.push(item);
+            }
+        });
+
+        // DESENHA O MENU NA TELA (Mantendo seu visual original)
+        Object.keys(categorias).forEach(key => {
+            const cat = categorias[key];
+            if (cat.items.length === 0) return;
+
+            const section = document.createElement('section');
+            section.id = key;
+            section.innerHTML = `
+                <div class="bg-[#E7252A] rounded-lg shadow-md mb-4 py-2 px-4 text-center border-2 border-[#C01E22]">
+                    <h2 class="text-2xl md:text-3xl font-black text-[#EED117] uppercase tracking-wider drop-shadow-sm">${cat.title}</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 items-stretch mb-8">
+                    ${cat.items.map(item => `
+                        <div onclick="orderItemDirect('${item.name}')" class="flex flex-col h-full cursor-pointer group relative bg-[#EED117] border-2 border-[#E7252A] rounded-lg p-3 pt-4 shadow-[2px_2px_0px_rgba(231,37,42,0.2)] hover:shadow-[4px_4px_0px_rgba(231,37,42,0.4)] hover:bg-[#FEF08A] hover:-translate-y-1.5 transition-all duration-200">
+                            ${item.image ? `
+                                <div class="w-full h-64 md:h-96 mb-3 overflow-hidden rounded border-2 border-[#E7252A] relative">
+                                    ${key === 'mais_pedidos' ? `<div class="absolute top-2 right-2 bg-[#E7252A] text-[#EED117] text-[10px] font-black px-2 py-0.5 rounded shadow-md border border-[#EED117] z-10 uppercase tracking-wide">Mais Pedido</div>` : ''}
+                                    <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"/>
+                                </div>
+                            ` : ''}
+                            <div class="flex justify-between items-baseline mb-2 pr-2">
+                                <h3 class="text-lg font-black text-[#E7252A] leading-tight uppercase">${item.name}</h3>
+                                <div class="flex-shrink-0 ml-2 bg-[#E7252A] text-[#EED117] px-2 py-0.5 rounded font-black text-lg shadow-sm">
+                                    R$ ${item.price.toFixed(2).replace('.', ',')}
+                                </div>
+                            </div>
+                            <p class="text-[#E7252A] text-sm leading-snug font-bold pr-2 flex-grow">${item.description}</p>
+                            <div class="mt-2 flex justify-end items-center gap-1.5">
+                                <span class="text-[10px] text-[#E7252A] font-black uppercase tracking-tighter">Clique para pedir</span>
+                                <div class="bg-[#22c55e] rounded-full p-1 shadow-sm">
+                                    <svg class="w-3 h-3 text-white fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.304-5.252l.002-.001a9.88 9.88 0 019.852-9.882c2.628 0 5.105 1.026 6.963 2.883a9.845 9.845 0 012.886 6.964 9.88 9.88 0 01-9.852 9.882l-.001.037z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            menuContainer.appendChild(section);
+        });
+
+    } catch (e) { console.error("Erro:", e); }
+}
+
+// Nova função simplificada para pedir
+function orderItemDirect(nome) {
+    const message = `Olá! Gostaria de pedir um ${nome}.`;
+    const url = `https://wa.me/${BUSINESS_INFO.whatsapp}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+}
+
+// Inicia o carregamento
+carregarCardapio();
                                 ` : ''}
                                 <div class="flex justify-between items-baseline mb-2 pr-2">
                                     <h3 class="text-lg font-black text-[#E7252A] leading-tight uppercase">${item.name}</h3>
