@@ -282,15 +282,18 @@
         }
 
         let itensMsg = carrinho.map(i => `> *${i.qty}x ${i.nome}*\n  Obs: ${i.obs}`).join('\n\n');
-        let msg = `*--- PEDIDO AGÁPIO ---*\n`;
+        
+        // --- MENSAGEM REORGANIZADA PARA FACILITAR A AGENDA ---
+        let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()} (${userData.bairro.toUpperCase()})*\n`;
         msg += `------------------------------------------\n`;
-        msg += `*CLIENTE:* ${userData.nome}\n*CONTATO:* ${userData.tel}\n`;
+        msg += `*CLIENTE:* ${userData.nome}\n`;
+        msg += `*BAIRRO:* ${userData.bairro}\n`;
+        msg += `*CONTATO:* ${userData.tel}\n`;
         msg += `------------------------------------------\n\n${itensMsg}\n\n`;
         msg += `------------------------------------------\n`;
-        msg += `*ENTREGA:* ${userData.bairro}\n`;
         
         if(userData.bairro !== 'Retirada') {
-            msg += `*END:* ${userData.rua}\n*REF:* ${userData.ponto || '-'}\n*TAXA:* R$ ${userData.taxa.toFixed(2).replace('.',',')} (A confirmar)\n`;
+            msg += `*END:* ${userData.rua}\n*REF:* ${userData.ponto || '-'}\n*TAXA:* R$ ${userData.taxa.toFixed(2).replace('.',',')}\n`;
         }
         
         msg += `------------------------------------------\n`;
@@ -299,11 +302,6 @@
         
         window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
     }
-
-    function chamarAtendenteExtra() {
-        if(confirm("Deseja falar com o atendente para adicionar itens extras?")) {
-            window.open(`https://wa.me/5551992141406?text=Olá! Quero adicionar itens extras ao meu pedido.`);
-        }
     }
 
     function clearMemory() { if(confirm("Apagar dados?")) { localStorage.clear(); location.reload(); } }
