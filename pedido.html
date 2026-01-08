@@ -300,10 +300,16 @@
         msg += `*PAGAMENTO:* ${pag}\n*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*`;
         if(valorTroco) msg += `\n*TROCO PARA: R$ ${valorTroco}*`;
         
-        window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
+         window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
     }
-    
-        function clearMemory() { if(confirm("Apagar dados?")) { localStorage.clear(); location.reload(); } }
+
+    function chamarAtendenteExtra() {
+        if(confirm("Deseja falar com o atendente para adicionar itens extras?")) {
+            window.open(`https://wa.me/5551992141406?text=Olá! Quero adicionar itens extras ao meu pedido.`);
+        }
+    }
+
+    function clearMemory() { if(confirm("Apagar dados?")) { localStorage.clear(); location.reload(); } }
 </script>
 </body>
 </html>
