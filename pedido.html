@@ -25,11 +25,11 @@
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjIE6oSAmM1W2lR2dxwXO1rqcb9rzVoXAeF_GrSeW6FmSjhFW8vyIgLSPWeCtKMyxiS-9-Uamt4i03spCOsZYTYBX8ttOfl7ISLKRinq9ofmejDVBIwO0M9BOrOsueiuyrXZ934xRZt7aakxOEkPKRh1Gv6JsVvqf2SMXf9DvD8Z4slze43_cYsC3GcFas/s1600/Novo%20banner%20agapio3.webp" class="w-full h-auto block" alt="Agápio Lanches">
         </div>
 
-        <button id="btnVoltar" onclick="voltar()" class="hidden absolute ..."> top-4 left-4 bg-white/80 w-10 h-10 rounded-full shadow-md z-20 flex items-center justify-center border border-gray-200">
-            <svg class="w-6 h-6 text-[#E7252A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-        </button>
+        <button id="btnVoltar" onclick="voltar()" class="hidden absolute top-4 left-4 bg-white/80 w-10 h-10 rounded-full shadow-md z-20 flex items-center justify-center border border-gray-200">
+    <svg class="w-6 h-6 text-[#E7252A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
+</button>
 
         <div class="p-6">
             <div id="step1" class="step active text-center">
@@ -136,11 +136,13 @@
     </div>
 
  <script>
+    // 1. CONFIGURAÇÕES INICIAIS
     let userData = { nome: '', tel: '', rua: '', ponto: '', bairro: '', taxa: 0 };
     let carrinho = [];
     let tempItem = { nome: '', preco: 0, qty: 1, tipo: '', extras: [] };
     window.currentStep = 1;
 
+    // Lista de extras conforme seu arquivo 
     const LISTA_EXTRAS = [
         { nome: "Alcaparras", preco: 6.00 }, { nome: "Aspargos", preco: 6.00 },
         { nome: "Alface", preco: 6.00 }, { nome: "Azeitona", preco: 6.00 },
@@ -165,6 +167,7 @@
         renderizarOpcoesExtras();
     };
 
+    // 2. NAVEGAÇÃO (A SETA VOLTAR AGORA FUNCIONA)
     function goStep(n) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         const target = n === 'Carrinho' ? 'stepCarrinho' : 'step' + n;
@@ -178,7 +181,6 @@
         }
     }
 
-    // --- CORREÇÃO DA SETA VOLTAR ---
     function voltar() {
         if (window.currentStep === 'Carrinho') goStep(2);
         else if (window.currentStep === 2) goStep(1);
@@ -196,13 +198,13 @@
         goStep(2);
     }
 
-    // --- SELEÇÃO DE ITEM (LIMPA OBSERVAÇÃO) ---
+    // 3. LÓGICA DE ITENS (LIMPA OBSERVAÇÕES E MUDA TEXTO PARA BEBIDAS)
     function selectItem(nome, preco, tipo) {
         tempItem = { nome, preco, qty: 1, tipo: tipo, extras: [] };
         document.getElementById('itemNome').innerText = nome;
         document.getElementById('qty').innerText = 1;
         
-        // LIMPEZA DA OBSERVAÇÃO
+        // LIMPA OBSERVAÇÕES
         const obs = document.getElementById('itemObs');
         obs.value = ''; 
         
@@ -213,6 +215,12 @@
             obs.placeholder = "Ex: Sem cebola, maionese à parte...";
             document.getElementById('btnExtra').classList.remove('hidden');
         }
+
+        // Reseta visual dos extras
+        document.querySelectorAll('[id^="btnExtra-"]').forEach(btn => {
+            btn.classList.replace('border-[#E7252A]', 'border-gray-100');
+            btn.classList.remove('bg-red-50');
+        });
         goStep(3);
     }
 
@@ -236,7 +244,7 @@
         goStep('Carrinho');
     }
 
-    // --- EXTRAS MODAL ---
+    // 4. EXTRAS (MODAL COM LISTA COMPLETA )
     function renderizarOpcoesExtras() {
         const container = document.getElementById('listaExtrasOpcoes');
         if(!container) return;
@@ -263,7 +271,7 @@
     function abrirModalExtras() { document.getElementById('modalExtras').classList.replace('hidden', 'flex'); }
     function fecharModalExtras() { document.getElementById('modalExtras').classList.replace('flex', 'hidden'); }
 
-    // --- FINALIZAÇÃO E TROCO ---
+    // 5. FINALIZAÇÃO (INFORMA TOTAL NO TROCO E ABRE CARTÕES)
     function renderCarrinho() {
         const container = document.getElementById('listaCarrinho');
         container.innerHTML = carrinho.map((item, index) => `
@@ -292,10 +300,10 @@
         let infoPag = pag;
 
         if (pag === 'Dinheiro') {
-            const troco = prompt(`TOTAL: R$ ${total.toFixed(2).replace('.',',')}\nTroco para quanto?`);
+            const troco = prompt(`VALOR DA CONTA: R$ ${total.toFixed(2).replace('.',',')}\nTroco para quanto? (Deixe em branco se não precisar)`);
             if (troco) infoPag = `Dinheiro (Troco para R$ ${troco})`;
         } else if (pag === 'Cartão') {
-            const card = prompt("Qual a bandeira? (Visa, Master, Elo...)");
+            const card = prompt("Qual a bandeira do cartão? (Visa, Master, Elo, Banricompras...)");
             if (card) infoPag = `Cartão (${card})`;
         }
 
@@ -311,7 +319,6 @@
         event.currentTarget.classList.add('bg-[#E7252A]', 'text-white');
     }
     function removeItem(index) { if(confirm("Remover?")) { carrinho.splice(index, 1); renderCarrinho(); if(carrinho.length===0) goStep(2); } }
-    function chamarAtendenteExtra() { if(confirm("Falar com atendente?")) window.open(`https://wa.me/5551992141406?text=Quero adicionais personalizados.`); }
 </script>
    <div id="modalExtras" class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-6 shadow-2xl border-4 border-[#E7252A]">
