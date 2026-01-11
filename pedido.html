@@ -129,6 +129,17 @@
         let carrinho = [];
         let tempItem = { nome: '', preco: 0, qty: 1, tipo: '', extras: [] };
         window.currentStep = 1;
+        function cancelarExtras() {
+    // Limpa os extras que ele selecionou nesta abertura do modal
+    tempItem.extras = [];
+    
+    // Reseta visualmente todos os botões de extras (tira a borda vermelha)
+    document.querySelectorAll('.btn-extra').forEach(b => {
+        b.classList.remove('bg-red-50', 'border-[#E7252A]');
+    });
+    
+    fecharModalExtras();
+}
 
         // Lista de extras do arquivo Adicionar 
         const LISTA_EXTRAS = [
