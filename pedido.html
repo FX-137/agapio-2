@@ -71,7 +71,7 @@
                </div>
                 <div class="flex justify-between items-end mb-1">
                     <p class="text-[10px] font-bold text-gray-400 uppercase italic ml-1">Observações:</p>
-                    <button id="btnExtra" onclick="chamarAtendenteExtra()" class="text-[12px] bg-yellow-100 text-yellow-700 px-2 py-1 rounded-lg font-bold border border-yellow-200 uppercase italic">Add itens Extras</button>
+                    <button id="btnExtra" onclick="abrirModalExtras()" class="text-[12px] bg-yellow-100 text-yellow-700 px-2 py-1 rounded-lg font-bold border border-yellow-200 uppercase italic">Add itens Extras</button>
                 </div>
                 <textarea id="itemObs" class="w-full bg-gray-50 border-2 border-gray-200 p-4 rounded-2xl mb-4 h-24 font-medium text-sm focus:border-[#E7252A] outline-none"></textarea>
                 <button onclick="addToCart()" class="w-full bg-[#E7252A] text-white py-4 rounded-2xl font-black uppercase shadow-md font-bold italic">Adicionar ao Pedido</button>
@@ -270,5 +270,14 @@
     }
     // Restante das suas funções (selectBairro, updateQty, etc) permanecem iguais.
 </script>
+    <div id="modalExtras" class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[2rem] p-6 shadow-2xl border-4 border-[#E7252A]">
+        <h3 class="text-center font-black uppercase italic text-[#E7252A] mb-4">Turbine seu Lanche!</h3>
+        <div id="listaExtrasOpcoes" class="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto no-scrollbar mb-4">
+            </div>
+        <button onclick="chamarAtendenteExtra()" class="w-full text-[10px] font-bold text-gray-400 uppercase mb-4 underline">Não encontrou o que procura? Fale conosco</button>
+        <button onclick="fecharModalExtras()" class="w-full bg-[#E7252A] text-white py-3 rounded-xl font-black uppercase shadow-lg">Confirmar Adicionais</button>
+    </div>
+</div>
 </body>
 </html>
