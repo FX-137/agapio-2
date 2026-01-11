@@ -123,6 +123,8 @@
             </button>
 
             <h3 class="font-black italic uppercase text-center mb-4 text-[#E7252A]">Adicionais Extras</h3>
+            <h3 class="font-black italic uppercase text-center mb-1 text-[#E7252A]">Adicionais Extras</h3>
+<p id="feedbackExtras" class="text-[10px] text-center font-bold text-gray-500 mb-4 italic">Nenhum extra selecionado</p>
             
             <div id="listaExtrasOpcoes" class="grid grid-cols-2 gap-2 overflow-y-auto no-scrollbar mb-6 p-1"></div>
             
@@ -235,14 +237,22 @@ function updateQty(v) {
         }
 
         function renderCarrinho() {
-            const c = document.getElementById('listaCarrinho');
-            c.innerHTML = carrinho.map((item, i) => `
-                <div onclick="removeItem(${i})" class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-sm flex justify-between items-center">
-                    <div class="text-left"><p class="font-bold">${item.qty}x ${item.nome}</p>
-                    <p class="text-[10px] text-gray-400">${item.extrasStr ? 'Extras: '+item.extrasStr+' | ' : ''}${item.obs}</p></div>
-                    <span class="text-red-500 font-bold text-[10px]">REMOVER</span>
-                </div>`).join('');
-        }
+    const c = document.getElementById('listaCarrinho');
+    c.innerHTML = carrinho.map((item, i) => {
+        // Cria a linha de extras se houver algum
+        const linhaExtras = item.extrasStr ? `<p class="text-[10px] text-orange-600 font-bold uppercase">+ EXTRAS: ${item.extrasStr}</p>` : '';
+        
+        return `
+            <div onclick="removeItem(${i})" class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-sm flex justify-between items-center mb-2">
+                <div class="text-left">
+                    <p class="font-bold">${item.qty}x ${item.nome} <span class="text-[#E7252A]">R$ ${(item.totalUnit * item.qty).toFixed(2).replace('.',',')}</span></p>
+                    ${linhaExtras}
+                    <p class="text-[10px] text-gray-400 italic">Obs: ${item.obs}</p>
+                </div>
+                <span class="text-red-500 font-black text-[10px] ml-2">REMOVER</span>
+            </div>`;
+    }).join('');
+}
 
         function removeItem(i) { if(confirm("Remover?")) { carrinho.splice(i,1); renderCarrinho(); if(!carrinho.length) goStep(2); } }
 
@@ -264,12 +274,28 @@ function updateQty(v) {
                 </button>`).join('');
         }
 
-        function toggleExtra(n, p) {
-            const idx = tempItem.extras.findIndex(e => e.n === n);
-            const btn = document.getElementById(`ex-${n}`);
-            if(idx > -1) { tempItem.extras.splice(idx,1); btn.classList.remove('bg-red-50', 'border-[#E7252A]'); }
-            else { tempItem.extras.push({n, p}); btn.classList.add('bg-red-50', 'border-[#E7252A]'); }
-        }
+       function toggleExtra(n, p) {
+    const idx = tempItem.extras.findIndex(e => e.n === n);
+    const btn = document.getElementById(`ex-${n}`);
+    const feedback = document.getElementById('feedbackExtras');
+
+    if(idx > -1) { 
+        tempItem.extras.splice(idx,1); 
+        btn.classList.remove('bg-red-50', 'border-[#E7252A]'); 
+    }
+    else { 
+        tempItem.extras.push({n, p}); 
+        btn.classList.add('bg-red-50', 'border-[#E7252A]'); 
+    }
+
+    // Atualiza o texto de aviso no modal
+    if(tempItem.extras.length > 0) {
+        const nomes = tempItem.extras.map(e => e.n).join(', ');
+        feedback.innerHTML = `<span class="text-green-600">Adicionado: ${nomes}</span>`;
+    } else {
+        feedback.innerText = "Nenhum extra selecionado";
+    }
+}
 
         function abrirModalExtras() { document.getElementById('modalExtras').classList.remove('hidden'); }
         function fecharModalExtras() { document.getElementById('modalExtras').classList.add('hidden'); }
