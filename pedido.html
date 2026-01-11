@@ -118,10 +118,10 @@
    <script>
     let userData = { nome: '', tel: '', rua: '', ponto: '', bairro: '', taxa: 0 };
     let carrinho = [];
-    let tempItem = { nome: '', preco: 0, qty: 1, tipo: '', extras: [] }; // Adicionado extras
+    let tempItem = { nome: '', preco: 0, qty: 1, tipo: '', extras: [] };
     window.currentStep = 1;
 
-    // --- LISTA DE EXTRAS (Edite aqui facilmente) ---
+    // LISTA DE EXTRAS DO ARQUIVO "ADICIONAR" 
     const LISTA_EXTRAS = [
         { nome: "Alcaparras", preco: 6.00 }, { nome: "Aspargos", preco: 6.00 },
         { nome: "Alface", preco: 6.00 }, { nome: "Azeitona", preco: 6.00 },
@@ -141,12 +141,31 @@
             document.getElementById('telefone').value = u.tel || '';
             document.getElementById('rua').value = u.rua || '';
             document.getElementById('ponto').value = u.ponto || '';
-            userData.nome = u.nome; userData.tel = u.tel; userData.rua = u.rua; userData.ponto = u.ponto;
+            userData = {...userData, ...u};
         }
         renderizarOpcoesExtras();
     };
 
-    // Renderiza os botões de extras na tela
+    function saveUserAndNext() {
+        userData.nome = document.getElementById('nome').value;
+        userData.tel = document.getElementById('telefone').value;
+        if(!userData.nome || !userData.tel) return alert("Preencha nome e WhatsApp!");
+        updateLS(); 
+        goStep(2);
+    }
+
+    function goStep(n) {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        const target = n === 'Carrinho' ? 'stepCarrinho' : 'step' + n;
+        const targetEl = document.getElementById(target);
+        if (targetEl) {
+            targetEl.classList.add('active');
+            window.currentStep = n;
+            const btnVoltar = document.getElementById('btnVoltar');
+            if(btnVoltar) btnVoltar.classList.toggle('hidden', n === 1);
+        }
+    }
+
     function renderizarOpcoesExtras() {
         const container = document.getElementById('listaExtrasOpcoes');
         if(!container) return;
@@ -162,7 +181,6 @@
     function toggleExtra(nome, preco) {
         const index = tempItem.extras.findIndex(e => e.nome === nome);
         const btn = document.getElementById(`btnExtra-${nome}`);
-        
         if (index > -1) {
             tempItem.extras.splice(index, 1);
             btn.classList.replace('border-[#E7252A]', 'border-gray-100');
@@ -175,13 +193,11 @@
     }
 
     function abrirModalExtras() {
-        document.getElementById('modalExtras').classList.remove('hidden');
-        document.getElementById('modalExtras').classList.add('flex');
+        document.getElementById('modalExtras').classList.replace('hidden', 'flex');
     }
 
     function fecharModalExtras() {
-        document.getElementById('modalExtras').classList.add('hidden');
-        document.getElementById('modalExtras').classList.remove('flex');
+        document.getElementById('modalExtras').classList.replace('flex', 'hidden');
     }
 
     function selectItem(nome, preco, tipo) {
@@ -190,7 +206,7 @@
         document.getElementById('qty').innerText = 1;
         document.getElementById('itemObs').value = '';
         
-        // Limpar visual dos botões de extras
+        // Limpar visual dos extras anteriores
         document.querySelectorAll('[id^="btnExtra-"]').forEach(btn => {
             btn.classList.replace('border-[#E7252A]', 'border-gray-100');
             btn.classList.remove('bg-red-50');
@@ -198,37 +214,26 @@
 
         const btnExtra = document.getElementById('btnExtra');
         if (tipo === 'bebida') btnExtra.classList.add('hidden');
-        else btnExtra.classList.remove('hidden');
-
-        atualizarPlaceholder();
+        else {
+            btnExtra.classList.remove('hidden');
+            btnExtra.onclick = abrirModalExtras; // Garante que abra o modal novo
+        }
         goStep(3);
     }
 
     function addToCart() {
         const obs = document.getElementById('itemObs').value;
-        const extrasTexto = tempItem.extras.length > 0 ? tempItem.extras.map(e => e.nome).join(', ') : '';
-        const precoComExtras = tempItem.preco + tempItem.extras.reduce((sum, e) => sum + e.preco, 0);
+        const extrasNomes = tempItem.extras.map(e => e.nome).join(', ');
+        const custoExtras = tempItem.extras.reduce((total, e) => total + e.preco, 0);
         
         carrinho.push({ 
             ...tempItem, 
-            preco: precoComExtras,
+            precoTotal: (tempItem.preco + custoExtras),
             obs: obs || 'Sem observações',
-            extrasStr: extrasTexto 
+            extrasStr: extrasNomes 
         });
         renderCarrinho();
         goStep('Carrinho');
-    }
-
-    // Mantive suas funções originais de navegação e WhatsApp...
-    function goStep(n) {
-        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-        const target = n === 'Carrinho' ? 'stepCarrinho' : 'step' + n;
-        const targetEl = document.getElementById(target);
-        if (targetEl) {
-            targetEl.classList.add('active');
-            window.currentStep = n;
-            document.getElementById('btnVoltar').classList.toggle('hidden', n === 1);
-        }
     }
 
     function renderCarrinho() {
@@ -248,14 +253,70 @@
         });
     }
 
+    function updateLS() {
+        const data = { 
+            nome: document.getElementById('nome').value, 
+            tel: document.getElementById('telefone').value, 
+            rua: document.getElementById('rua').value, 
+            ponto: document.getElementById('ponto').value 
+        };
+        localStorage.setItem('agapio_user', JSON.stringify(data));
+    }
+
+    function chamarAtendenteExtra() {
+        if(confirm("Deseja falar com o atendente para adicionar itens extras?")) {
+            window.open(`https://wa.me/5551992141406?text=Olá! Quero adicionar itens extras ao meu pedido.`);
+        }
+    }
+
+    // Mantive as funções auxiliares originais (showTab, updateQty, selectBairro, etc.) abaixo desta linha...
+    function showTab(event, tabId) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+        document.getElementById(tabId).classList.remove('hidden');
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.remove('bg-[#E7252A]', 'text-white');
+            b.classList.add('text-gray-500');
+        });
+        event.currentTarget.classList.add('bg-[#E7252A]', 'text-white');
+    }
+    
+    function updateQty(val) {
+        tempItem.qty = Math.max(1, tempItem.qty + val);
+        document.getElementById('qty').innerText = tempItem.qty;
+    }
+
+    function removeItem(index) {
+        if(confirm("Remover este item?")) {
+            carrinho.splice(index, 1);
+            renderCarrinho();
+            if(carrinho.length === 0) goStep(2);
+        }
+    }
+
+    function selectBairro(b, taxa) {
+        const ruaInput = document.getElementById('rua').value.trim();
+        if (b !== 'Retirada' && ruaInput === "") {
+            alert("Informe Rua e Número antes de selecionar o bairro!");
+            return;
+        }
+        userData.bairro = b; 
+        userData.taxa = taxa;
+        userData.rua = ruaInput;
+        userData.ponto = document.getElementById('ponto').value;
+        updateLS();
+        let subtotal = carrinho.reduce((sum, item) => sum + (item.precoTotal * item.qty), 0);
+        document.getElementById('resumoTotal').innerText = `R$ ${(subtotal + taxa).toFixed(2).replace('.',',')}`;
+        goStep(5);
+    }
+
     function finishOrder(pag) {
-        let subtotal = carrinho.reduce((sum, i) => sum + (i.preco * i.qty), 0);
+        let subtotal = carrinho.reduce((sum, i) => sum + (i.precoTotal * i.qty), 0);
         let total = subtotal + userData.taxa;
         let itensMsg = carrinho.map(i => {
-            let txt = `> *${i.qty}x ${i.nome}*\n`;
-            if(i.extrasStr) txt += `  Adicionais: ${i.extrasStr}\n`;
-            txt += `  Obs: ${i.obs}`;
-            return txt;
+            let res = `> *${i.qty}x ${i.nome}*\n`;
+            if(i.extrasStr) res += `  Extras: ${i.extrasStr}\n`;
+            res += `  Obs: ${i.obs}`;
+            return res;
         }).join('\n\n');
         
         let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()} (${userData.bairro.toUpperCase()})*\n`;
@@ -265,18 +326,18 @@
         msg += `------------------------------------------\n`;
         if(userData.bairro !== 'Retirada') msg += `*END:* ${userData.rua}\n*REF:* ${userData.ponto || '-'}\n*TAXA:* R$ ${userData.taxa.toFixed(2).replace('.',',')}\n`;
         msg += `------------------------------------------\n*PAGAMENTO:* ${pag}\n*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*`;
-        
         window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
     }
-    // Restante das suas funções (selectBairro, updateQty, etc) permanecem iguais.
+
+    function clearMemory() { if(confirm("Apagar dados?")) { localStorage.clear(); location.reload(); } }
 </script>
-    <div id="modalExtras" class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-[2rem] p-6 shadow-2xl border-4 border-[#E7252A]">
-        <h3 class="text-center font-black uppercase italic text-[#E7252A] mb-4">Turbine seu Lanche!</h3>
+   <div id="modalExtras" class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-6 shadow-2xl border-4 border-[#E7252A]">
+        <h3 class="text-center font-black uppercase italic text-[#E7252A] mb-4 text-xl">Turbine seu Lanche!</h3>
         <div id="listaExtrasOpcoes" class="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto no-scrollbar mb-4">
             </div>
         <button onclick="chamarAtendenteExtra()" class="w-full text-[10px] font-bold text-gray-400 uppercase mb-4 underline">Não encontrou o que procura? Fale conosco</button>
-        <button onclick="fecharModalExtras()" class="w-full bg-[#E7252A] text-white py-3 rounded-xl font-black uppercase shadow-lg">Confirmar Adicionais</button>
+        <button onclick="fecharModalExtras()" class="w-full bg-[#E7252A] text-white py-4 rounded-2xl font-black uppercase shadow-lg">Confirmar e Voltar</button>
     </div>
 </div>
 </body>
