@@ -275,14 +275,14 @@ function updateQty(v) {
         function fecharModalExtras() { document.getElementById('modalExtras').classList.add('hidden'); }
 
         function finishOrder(pag) {
-            let sub = carrinho.reduce((s, i) => s + (i.totalUnit * i.qty), 0);
-            let tot = sub + userData.taxa;
-            let infoPag = pag;
+    let sub = carrinho.reduce((s, i) => s + (i.totalUnit * i.qty), 0);
+    let tot = sub + userData.taxa;
+    let infoPag = pag;
 
-            if(pag === 'Dinheiro') {
-                const troco = prompt(`Total: R$ ${tot.toFixed(2)}\nTroco para quanto? (Deixe vazio se não precisar)`);
-                if(troco) infoPag += ` (Troco para R$ ${troco})`;
-           } else if(pag === 'Cartão') {
+    if(pag === 'Dinheiro') {
+        const troco = prompt(`Total: R$ ${tot.toFixed(2).replace('.',',')}\nTroco para quanto? (Deixe vazio se não precisar)`);
+        if(troco) infoPag += ` (Troco para R$ ${troco})`;
+    } else if(pag === 'Cartão') {
         // Menu numerado para agilizar
         const cardNum = prompt(
             "QUAL A BANDEIRA?\n" +
@@ -300,20 +300,16 @@ function updateQty(v) {
         else if(cardNum === "3") bandeira = "Elo";
         else if(cardNum === "4") bandeira = "Banri";
         else if(cardNum === "5") bandeira = "Hiper";
-        else bandeira = cardNum; // Aceita se ele digitar o nome também
+        else if(cardNum) bandeira = cardNum; // Aceita se digitar o nome
 
         if(bandeira) infoPag += ` (${bandeira})`;
     }
 
     let itens = carrinho.map(i => `*${i.qty}x ${i.nome}*\n${i.extrasStr ? 'Extras: '+i.extrasStr+'\n' : ''}Obs: ${i.obs}`).join('\n\n');
-    let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()}*\n---------------------------\n${itens}\n---------------------------\n*BAIRRO:* ${userData.bairro}\n*END:* ${userData.rua}\n*PAGAMENTO:* ${infoPag}\n*TOTAL: R$ ${tot.toFixed(2).replace('.',',')}*`;
+    let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()}* \n---------------------------\n${itens}\n---------------------------\n*BAIRRO:* ${userData.bairro}\n*END:* ${userData.rua}\n*PAGAMENTO:* ${infoPag}\n*TOTAL: R$ ${tot.toFixed(2).replace('.',',')}*`;
+    
     window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
 }
-
-            let itens = carrinho.map(i => `*${i.qty}x ${i.nome}*\n${i.extrasStr ? 'Extras: '+i.extrasStr+'\n' : ''}Obs: ${i.obs}`).join('\n\n');
-            let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()}*\n---------------------------\n${itens}\n---------------------------\n*BAIRRO:* ${userData.bairro}\n*END:* ${userData.rua}\n*PAGAMENTO:* ${infoPag}\n*TOTAL: R$ ${tot.toFixed(2).replace('.',',')}*`;
-            window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
-        }
 
         function showTab(e, id) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
