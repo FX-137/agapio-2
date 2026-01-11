@@ -63,19 +63,26 @@
             </div>
 
             <div id="step3" class="step text-center">
-                <p class="font-bold mb-2 text-lg italic uppercase">Item: <span id="itemNome" class="text-[#E7252A]"></span></p>
-                <div class="flex items-center justify-center gap-6 mb-6">
-                    <button onclick="updateQty(-1)" class="bg-gray-100 w-12 h-12 rounded-full font-black text-xl border border-gray-200">-</button>
-                    <span id="qty" class="text-3xl font-black">1</span>
-                    <button onclick="updateQty(1)" class="bg-gray-100 w-12 h-12 rounded-full font-black text-xl border border-gray-200">+</button>
-               </div>
-                <div class="flex justify-between items-end mb-1">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase italic ml-1">Observações:</p>
-                    <button id="btnExtra" onclick="abrirModalExtras()" class="text-[12px] bg-yellow-100 text-yellow-700 px-2 py-1 rounded-lg font-bold border border-yellow-200 uppercase italic">Add itens Extras</button>
-                </div>
-                <textarea id="itemObs" class="w-full bg-gray-50 border-2 border-gray-200 p-4 rounded-2xl mb-4 h-24 font-medium text-sm focus:border-[#E7252A] outline-none"></textarea>
-                <button onclick="addToCart()" class="w-full bg-[#E7252A] text-white py-4 rounded-2xl font-black uppercase shadow-md font-bold italic">Adicionar ao Pedido</button>
-            </div>
+    <p class="font-bold mb-2 text-lg italic uppercase">Item: <span id="itemNome" class="text-[#E7252A]"></span></p>
+    
+    <div class="flex items-center justify-center gap-6 mb-6">
+        <button onclick="updateQty(-1)" class="bg-gray-100 w-12 h-12 rounded-full font-black text-xl border border-gray-200">-</button>
+        <span id="qty" class="text-3xl font-black">1</span>
+        <button onclick="updateQty(1)" class="bg-gray-100 w-12 h-12 rounded-full font-black text-xl border border-gray-200">+</button>
+    </div>
+
+    <button id="btnExtra" onclick="abrirModalExtras()" class="w-full bg-white border-2 border-dashed border-gray-300 text-gray-500 py-3 rounded-2xl font-bold uppercase text-xs mb-4 hover:border-[#E7252A] hover:text-[#E7252A] transition-all">
+        + Add itens Extras
+    </button>
+
+    <textarea id="itemObs" placeholder="Alguma observação? (Ex: Sem cebola, maionese à parte...)" 
+        class="w-full border-2 border-gray-100 rounded-2xl p-4 text-sm focus:border-[#E7252A] focus:outline-none transition-all mb-4" 
+        rows="3"></textarea>
+
+    <button onclick="addToCart()" class="w-full bg-[#E7252A] text-white py-4 rounded-2xl font-black uppercase shadow-lg shadow-red-200">
+        Adicionar ao Pedido
+    </button>
+</div>
 
             <div id="stepCarrinho" class="step">
                 <p class="font-bold mb-4 text-center italic text-sm">Seu Pedido (toque para remover):</p>
