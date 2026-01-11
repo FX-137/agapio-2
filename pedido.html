@@ -229,54 +229,54 @@
     }
 
     function addToCart() {
-        const obs = document.getElementById('itemObs').value; // Recupera o texto da caixa de observação
-        const extrasNomes = tempItem.extras.map(e => e.nome).join(', ');
-        const custoExtras = tempItem.extras.reduce((total, e) => total + e.preco, 0);
-        
-        carrinho.push({ 
-            ...tempItem, 
-            precoTotal: (tempItem.preco + custoExtras),
-            obs: obs || 'Sem observações', // Garante que a obs apareça no carrinho
-            extrasStr: extrasNomes 
-        });
-        renderCarrinho();
-        goStep('Carrinho');
-    }
+    const obsCampo = document.getElementById('itemObs');
+    const obs = obsCampo ? obsCampo.value : 'Sem observações';
+    
+    const extrasNomes = tempItem.extras.map(e => e.nome).join(', ');
+    const custoExtras = tempItem.extras.reduce((total, e) => total + e.preco, 0);
+    
+    carrinho.push({ 
+        ...tempItem, 
+        precoTotal: (tempItem.preco + custoExtras),
+        obs: obs || 'Sem observações',
+        extrasStr: extrasNomes 
+    });
+    
+    renderCarrinho();
+    goStep('Carrinho');
+}
 
-    function finishOrder(pag) {
-        let subtotal = carrinho.reduce((sum, i) => sum + (i.precoTotal * i.qty), 0);
-        let total = subtotal + userData.taxa;
-        let valorTroco = "";
+function finishOrder(pag) {
+    let subtotal = carrinho.reduce((sum, i) => sum + (i.precoTotal * i.qty), 0);
+    let total = subtotal + userData.taxa;
+    let textoTroco = "";
 
-        // Lógica do Troco para Dinheiro
-        if (pag === 'Dinheiro') {
-            const trocoPara = prompt("Troco para quanto? (Deixe em branco se não precisar)");
-            if (trocoPara) {
-                valorTroco = `R$ ${trocoPara}`;
-            }
+    if (pag === 'Dinheiro') {
+        const trocoPara = prompt("Troco para quanto? (Deixe em branco se não precisar)");
+        if (trocoPara && trocoPara.trim() !== "") {
+            textoTroco = `\n*TROCO PARA:* R$ ${trocoPara}`;
         }
-
-        let itensMsg = carrinho.map(i => {
-            let res = `> *${i.qty}x ${i.nome}*\n`;
-            if(i.extrasStr) res += `  Extras: ${i.extrasStr}\n`;
-            res += `  Obs: ${i.obs}`; // Inclui a observação na mensagem do Whats
-            return res;
-        }).join('\n\n');
-        
-        let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()} (${userData.bairro.toUpperCase()})*\n`;
-        msg += `------------------------------------------\n`;
-        msg += `*CLIENTE:* ${userData.nome}\n*BAIRRO:* ${userData.bairro}\n*CONTATO:* ${userData.tel}\n`;
-        msg += `------------------------------------------\n\n${itensMsg}\n\n`;
-        msg += `------------------------------------------\n`;
-        if(userData.bairro !== 'Retirada') msg += `*END:* ${userData.rua}\n*REF:* ${userData.ponto || '-'}\n*TAXA:* R$ ${userData.taxa.toFixed(2).replace('.',',')}\n`;
-        msg += `------------------------------------------\n*PAGAMENTO:* ${pag}\n`;
-        
-        if(valorTroco) msg += `*TROCO PARA:* ${valorTroco}\n`;
-        
-        msg += `*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*`;
-
-        window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
     }
+
+    let itensMsg = carrinho.map(i => {
+        let res = `> *${i.qty}x ${i.nome}*\n`;
+        if(i.extrasStr) res += `  Extras: ${i.extrasStr}\n`;
+        res += `  Obs: ${i.obs}`;
+        return res;
+    }).join('\n\n');
+    
+    let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()} (${userData.bairro.toUpperCase()})*\n`;
+    msg += `------------------------------------------\n`;
+    msg += `*CLIENTE:* ${userData.nome}\n*BAIRRO:* ${userData.bairro}\n*CONTATO:* ${userData.tel}\n`;
+    msg += `------------------------------------------\n\n${itensMsg}\n\n`;
+    msg += `------------------------------------------\n`;
+    if(userData.bairro !== 'Retirada') {
+        msg += `*END:* ${userData.rua}\n*REF:* ${userData.ponto || '-'}\n*TAXA:* R$ ${userData.taxa.toFixed(2).replace('.',',')}\n`;
+    }
+    msg += `------------------------------------------\n*PAGAMENTO:* ${pag}${textoTroco}\n*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*`;
+    
+    window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
+}
     }
 
     // Mantive as funções auxiliares originais (showTab, updateQty, selectBairro, etc.) abaixo desta linha...
