@@ -174,14 +174,28 @@
             document.getElementById('qty').innerText = 1;
             document.getElementById('itemObs').value = ''; // Limpa observação
             document.getElementById('btnExtra').classList.toggle('hidden', tipo === 'bebida');
+            document.getElementById('itemObs').placeholder = (tipo === 'bebida') ? "Ex: Gelada, com gelo..." : "Ex: Sem cebola, maionese à parte...";
             
             // Reseta cores dos extras no modal
             document.querySelectorAll('.btn-extra').forEach(b => b.classList.remove('bg-red-50', 'border-[#E7252A]'));
             goStep(3);
         }
 
-        function updateQty(v) { tempItem.qty = Math.max(1, tempItem.qty + v); document.getElementById('qty').innerText = tempItem.qty; }
-
+function updateQty(v) {
+    tempItem.qty = Math.max(1, tempItem.qty + v);
+    document.getElementById('qty').innerText = tempItem.qty;
+    
+    const campoObs = document.getElementById('itemObs');
+    
+    // Se não for bebida e a quantidade for maior que 1, muda o texto
+    if (tempItem.tipo !== 'bebida') {
+        if (tempItem.qty > 1) {
+            campoObs.placeholder = "Você pediu " + tempItem.qty + " itens. Por favor, especifique cada um (Ex: O primeiro sem cebola, o segundo completo...)";
+        } else {
+            campoObs.placeholder = "Ex: Sem cebola, maionese à parte...";
+        }
+    }
+}
         function addToCart() {
             const exCusto = tempItem.extras.reduce((s, e) => s + e.p, 0);
             const exNomes = tempItem.extras.map(e => e.n).join(', ');
