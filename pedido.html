@@ -62,14 +62,19 @@
                 </div>
             </div>
 
-            <div id="step3" class="step text-center">
+           <div id="step3" class="step text-center">
     <p class="font-bold mb-2 text-lg italic uppercase">Item: <span id="itemNome" class="text-[#E7252A]"></span></p>
-    
     <div class="flex items-center justify-center gap-6 mb-6">
         <button onclick="updateQty(-1)" class="bg-gray-100 w-12 h-12 rounded-full font-black text-xl border border-gray-200">-</button>
         <span id="qty" class="text-3xl font-black">1</span>
         <button onclick="updateQty(1)" class="bg-gray-100 w-12 h-12 rounded-full font-black text-xl border border-gray-200">+</button>
     </div>
+    <button id="btnExtra" onclick="abrirModalExtras()" class="w-full bg-white border-2 border-dashed border-gray-300 text-gray-500 py-3 rounded-2xl font-bold uppercase text-xs mb-4 hover:border-[#E7252A]">
+        + Add itens Extras
+    </button>
+    <textarea id="itemObs" placeholder="Ex: Sem cebola..." class="w-full border-2 border-gray-100 rounded-2xl p-4 text-sm focus:border-[#E7252A] focus:outline-none mb-4" rows="3"></textarea>
+    <button onclick="addToCart()" class="w-full bg-[#E7252A] text-white py-4 rounded-2xl font-black uppercase shadow-lg">Adicionar ao Pedido</button>
+</div>
 
     <button id="btnExtra" onclick="abrirModalExtras()" class="w-full bg-white border-2 border-dashed border-gray-300 text-gray-500 py-3 rounded-2xl font-bold uppercase text-xs mb-4 hover:border-[#E7252A] transition-all">
         + Add itens Extras
@@ -135,14 +140,12 @@
         </div>
     </div>
 
- <script>
-    // 1. CONFIGURAÇÕES INICIAIS
+<script>
     let userData = { nome: '', tel: '', rua: '', ponto: '', bairro: '', taxa: 0 };
     let carrinho = [];
     let tempItem = { nome: '', preco: 0, qty: 1, tipo: '', extras: [] };
     window.currentStep = 1;
 
-    // Lista de extras conforme seu arquivo 
     const LISTA_EXTRAS = [
         { nome: "Alcaparras", preco: 6.00 }, { nome: "Aspargos", preco: 6.00 },
         { nome: "Alface", preco: 6.00 }, { nome: "Azeitona", preco: 6.00 },
@@ -167,7 +170,6 @@
         renderizarOpcoesExtras();
     };
 
-    // 2. NAVEGAÇÃO (A SETA VOLTAR AGORA FUNCIONA)
     function goStep(n) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         const target = n === 'Carrinho' ? 'stepCarrinho' : 'step' + n;
@@ -175,8 +177,8 @@
         if (targetEl) {
             targetEl.classList.add('active');
             window.currentStep = n;
-            const btnVoltar = document.getElementById('btnVoltar');
-            if(btnVoltar) btnVoltar.classList.toggle('hidden', n === 1);
+            const btnV = document.getElementById('btnVoltar');
+            if(btnV) btnV.classList.toggle('hidden', n === 1);
             window.scrollTo(0,0);
         }
     }
@@ -198,127 +200,99 @@
         goStep(2);
     }
 
-    // 3. LÓGICA DE ITENS (LIMPA OBSERVAÇÕES E MUDA TEXTO PARA BEBIDAS)
     function selectItem(nome, preco, tipo) {
         tempItem = { nome, preco, qty: 1, tipo: tipo, extras: [] };
         document.getElementById('itemNome').innerText = nome;
         document.getElementById('qty').innerText = 1;
         
-        // LIMPA OBSERVAÇÕES
-        const obs = document.getElementById('itemObs');
-        obs.value = ''; 
+        // AQUI LIMPA A OBSERVAÇÃO SEMPRE
+        const campoObs = document.getElementById('itemObs');
+        campoObs.value = ''; 
+        campoObs.placeholder = (tipo === 'bebida') ? "Ex: Gelada, com gelo..." : "Ex: Sem cebola, maionese à parte...";
         
-        if(tipo === 'bebida') {
-            obs.placeholder = "Ex: Gelada, copo com gelo...";
-            document.getElementById('btnExtra').classList.add('hidden');
-        } else {
-            obs.placeholder = "Ex: Sem cebola, maionese à parte...";
-            document.getElementById('btnExtra').classList.remove('hidden');
-        }
-
-        // Reseta visual dos extras
-        document.querySelectorAll('[id^="btnExtra-"]').forEach(btn => {
-            btn.classList.replace('border-[#E7252A]', 'border-gray-100');
-            btn.classList.remove('bg-red-50');
+        document.getElementById('btnExtra').classList.toggle('hidden', tipo === 'bebida');
+        
+        document.querySelectorAll('[id^="btnExtra-"]').forEach(b => {
+            b.classList.replace('border-[#E7252A]', 'border-gray-100');
+            b.classList.remove('bg-red-50');
         });
         goStep(3);
     }
 
-    function updateQty(val) {
-        tempItem.qty = Math.max(1, tempItem.qty + val);
-        document.getElementById('qty').innerText = tempItem.qty;
-    }
+    function updateQty(v) { tempItem.qty = Math.max(1, tempItem.qty + v); document.getElementById('qty').innerText = tempItem.qty; }
 
     function addToCart() {
-        const obs = document.getElementById('itemObs').value;
-        const extrasNomes = tempItem.extras.map(e => e.nome).join(', ');
-        const custoExtras = tempItem.extras.reduce((total, e) => total + e.preco, 0);
-        
-        carrinho.push({ 
-            ...tempItem, 
-            precoTotal: (tempItem.preco + custoExtras),
-            obs: obs || 'Sem observações',
-            extrasStr: extrasNomes 
-        });
+        const obs = document.getElementById('itemObs').value || 'Sem observações';
+        const exNomes = tempItem.extras.map(e => e.nome).join(', ');
+        const exCusto = tempItem.extras.reduce((t, e) => t + e.preco, 0);
+        carrinho.push({ ...tempItem, precoTotal: (tempItem.preco + exCusto), obs: obs, extrasStr: exNomes });
         renderCarrinho();
         goStep('Carrinho');
     }
 
-    // 4. EXTRAS (MODAL COM LISTA COMPLETA )
     function renderizarOpcoesExtras() {
-        const container = document.getElementById('listaExtrasOpcoes');
-        if(!container) return;
-        container.innerHTML = LISTA_EXTRAS.map(extra => `
-            <button onclick="toggleExtra('${extra.nome}', ${extra.preco})" id="btnExtra-${extra.nome}" class="p-2 border-2 border-gray-100 rounded-xl text-[11px] font-bold bg-white transition-all">
-                ${extra.nome}<br><span class="text-[#E7252A]">R$ ${extra.preco.toFixed(2)}</span>
+        const c = document.getElementById('listaExtrasOpcoes');
+        if(!c) return;
+        c.innerHTML = LISTA_EXTRAS.map(e => `
+            <button onclick="toggleExtra('${e.nome}', ${e.preco})" id="btnExtra-${e.nome}" class="p-2 border-2 border-gray-100 rounded-xl text-[11px] font-bold bg-white transition-all">
+                ${e.nome}<br><span class="text-[#E7252A]">R$ ${e.preco.toFixed(2)}</span>
             </button>`).join('');
     }
 
-    function toggleExtra(nome, preco) {
-        const index = tempItem.extras.findIndex(e => e.nome === nome);
-        const btn = document.getElementById(`btnExtra-${nome}`);
-        if (index > -1) {
-            tempItem.extras.splice(index, 1);
-            btn.classList.replace('border-[#E7252A]', 'border-gray-100');
-            btn.classList.remove('bg-red-50');
-        } else {
-            tempItem.extras.push({ nome, preco });
-            btn.classList.replace('border-gray-100', 'border-[#E7252A]');
-            btn.classList.add('bg-red-50');
-        }
+    function toggleExtra(n, p) {
+        const i = tempItem.extras.findIndex(e => e.nome === n);
+        const b = document.getElementById(`btnExtra-${n}`);
+        if (i > -1) { tempItem.extras.splice(i, 1); b.classList.replace('border-[#E7252A]', 'border-gray-100'); b.classList.remove('bg-red-50'); }
+        else { tempItem.extras.push({ nome: n, preco: p }); b.classList.replace('border-gray-100', 'border-[#E7252A]'); b.classList.add('bg-red-50'); }
     }
 
     function abrirModalExtras() { document.getElementById('modalExtras').classList.replace('hidden', 'flex'); }
     function fecharModalExtras() { document.getElementById('modalExtras').classList.replace('flex', 'hidden'); }
 
-    // 5. FINALIZAÇÃO (INFORMA TOTAL NO TROCO E ABRE CARTÕES)
     function renderCarrinho() {
-        const container = document.getElementById('listaCarrinho');
-        container.innerHTML = carrinho.map((item, index) => `
-            <div onclick="removeItem(${index})" class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-200 text-sm mb-2">
-                <div class="text-left">
-                    <p class="font-bold">${item.qty}x ${item.nome}</p>
-                    <p class="text-[10px] text-gray-400 italic">${item.extrasStr ? 'EXTRAS: '+item.extrasStr+' | ' : ''}${item.obs}</p>
-                </div>
+        document.getElementById('listaCarrinho').innerHTML = carrinho.map((i, idx) => `
+            <div onclick="removeItem(${idx})" class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-200 text-sm mb-2">
+                <div class="text-left"><p class="font-bold">${i.qty}x ${i.nome}</p>
+                <p class="text-[10px] text-gray-400 italic">${i.extrasStr ? 'EXTRAS: '+i.extrasStr+' | ' : ''}${i.obs}</p></div>
                 <span class="text-red-500 font-bold text-xs uppercase">Remover</span>
             </div>`).join('');
     }
 
-    function selectBairro(b, taxa) {
+    function selectBairro(b, t) {
         const r = document.getElementById('rua').value.trim();
-        if (b !== 'Retirada' && r === "") return alert("Informe Rua e Número primeiro!");
-        userData.bairro = b; userData.taxa = taxa; userData.rua = r;
+        if (b !== 'Retirada' && r === "") return alert("Informe Rua e Número!");
+        userData.bairro = b; userData.taxa = t; userData.rua = r;
         userData.ponto = document.getElementById('ponto').value;
-        let subtotal = carrinho.reduce((sum, item) => sum + (item.precoTotal * item.qty), 0);
-        document.getElementById('resumoTotal').innerText = `R$ ${(subtotal + taxa).toFixed(2).replace('.',',')}`;
+        let sub = carrinho.reduce((s, i) => s + (i.precoTotal * i.qty), 0);
+        document.getElementById('resumoTotal').innerText = `R$ ${(sub + t).toFixed(2).replace('.',',')}`;
         goStep(5);
     }
 
     function finishOrder(pag) {
-        let subtotal = carrinho.reduce((sum, i) => sum + (i.precoTotal * i.qty), 0);
-        let total = subtotal + userData.taxa;
-        let infoPag = pag;
+        let sub = carrinho.reduce((s, i) => s + (i.precoTotal * i.qty), 0);
+        let tot = sub + userData.taxa;
+        let info = pag;
 
         if (pag === 'Dinheiro') {
-            const troco = prompt(`VALOR DA CONTA: R$ ${total.toFixed(2).replace('.',',')}\nTroco para quanto? (Deixe em branco se não precisar)`);
-            if (troco) infoPag = `Dinheiro (Troco para R$ ${troco})`;
+            const troco = prompt(`VALOR DA CONTA: R$ ${tot.toFixed(2).replace('.',',')}\nTroco para quanto? (Vazio se não precisar)`);
+            if (troco) info = `Dinheiro (Troco para R$ ${troco})`;
         } else if (pag === 'Cartão') {
-            const card = prompt("Qual a bandeira do cartão? (Visa, Master, Elo, Banricompras...)");
-            if (card) infoPag = `Cartão (${card})`;
+            const card = prompt("Qual a bandeira? (Visa, Master, Elo...)");
+            if (card) info = `Cartão (${card})`;
         }
 
-        let itensMsg = carrinho.map(i => `> *${i.qty}x ${i.nome}*\n${i.extrasStr ? '  Extras: '+i.extrasStr+'\n' : ''}  Obs: ${i.obs}`).join('\n\n');
-        let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()}*\n------------------------------------------\n*CLIENTE:* ${userData.nome}\n*BAIRRO:* ${userData.bairro}\n------------------------------------------\n\n${itensMsg}\n\n------------------------------------------\n*PAGAMENTO:* ${infoPag}\n*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*`;
+        let iMsg = carrinho.map(i => `> *${i.qty}x ${i.nome}*\n${i.extrasStr ? '  Extras: '+i.extrasStr+'\n' : ''}  Obs: ${i.obs}`).join('\n\n');
+        let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()}*\n------------------------------------------\n*CLIENTE:* ${userData.nome}\n*BAIRRO:* ${userData.bairro}\n------------------------------------------\n\n${iMsg}\n\n------------------------------------------\n*PAGAMENTO:* ${info}\n*TOTAL: R$ ${tot.toFixed(2).replace('.',',')}*`;
         window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
     }
 
-    function showTab(event, tabId) {
+    function showTab(e, id) {
         document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-        document.getElementById(tabId).classList.remove('hidden');
+        document.getElementById(id).classList.remove('hidden');
         document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('bg-[#E7252A]', 'text-white'); b.classList.add('text-gray-500'); });
-        event.currentTarget.classList.add('bg-[#E7252A]', 'text-white');
+        e.currentTarget.classList.add('bg-[#E7252A]', 'text-white');
     }
-    function removeItem(index) { if(confirm("Remover?")) { carrinho.splice(index, 1); renderCarrinho(); if(carrinho.length===0) goStep(2); } }
+    function removeItem(idx) { if(confirm("Remover?")) { carrinho.splice(idx, 1); renderCarrinho(); if(carrinho.length===0) goStep(2); } }
 </script>
    <div id="modalExtras" class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-6 shadow-2xl border-4 border-[#E7252A]">
