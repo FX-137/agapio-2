@@ -315,50 +315,62 @@ function fecharModalExtras() {
 }
 
        function finishOrder(pag) {
-            let subtotal = carrinho.reduce((s, i) => s + (i.totalUnit * i.qty), 0);
-            let total = subtotal + userData.taxa;
-            let infoPag = pag;
-            let valorTroco = "";
+    let subtotal = carrinho.reduce((s, i) => s + (i.totalUnit * i.qty), 0);
+    let total = subtotal + userData.taxa;
+    let infoPag = pag;
+    let valorTroco = "";
 
-            if(pag === 'Dinheiro') {
-                valorTroco = prompt(`Total: R$ ${total.toFixed(2).replace('.',',')}\nTroco para quanto? (Deixe vazio se não precisar)`);
-            } else if(pag === 'Cartão') {
-                const cardNum = prompt("QUAL A BANDEIRA?\n1-Visa\n2-Master\n3-Elo\n4-Banri\n5-Hiper\nDigite o número:");
-                let bandeira = "";
-                if(cardNum === "1") bandeira = "Visa";
-                else if(cardNum === "2") bandeira = "Master";
-                else if(cardNum === "3") bandeira = "Elo";
-                else if(cardNum === "4") bandeira = "Banri";
-                else if(cardNum === "5") bandeira = "Hiper";
-                else if(cardNum) bandeira = cardNum;
-                if(bandeira) infoPag += ` (${bandeira})`;
-            }
+    if(pag === 'Dinheiro') {
+        valorTroco = prompt(`Total: R$ ${total.toFixed(2).replace('.',',')}\nTroco para quanto? (Deixe vazio se não precisar)`);
+    } else if(pag === 'Cartão') {
+        const cardNum = prompt("QUAL A BANDEIRA?\n1-Visa\n2-Master\n3-Elo\n4-Banri\n5-Hiper\nDigite o número:");
+        let bandeira = "";
+        if(cardNum === "1") bandeira = "Visa";
+        else if(cardNum === "2") bandeira = "Master";
+        else if(cardNum === "3") bandeira = "Elo";
+        else if(cardNum === "4") bandeira = "Banri";
+        else if(cardNum === "5") bandeira = "Hiper";
+        else if(cardNum) bandeira = cardNum;
+        if(bandeira) infoPag += ` (${bandeira})`;
+    }
 
-            // Formatação dos itens com extras inclusos
-            let itensMsg = carrinho.map(i => {
-                let txt = `> *${i.qty}x ${i.nome}*${i.extrasStr ? '\n  Extras: ' + i.extrasStr : ''}\n  Obs: ${i.obs}`;
-                return txt;
-            }).join('\n\n');
+    let itensMsg = carrinho.map(i => {
+        return `> *${i.qty}x ${i.nome}*${i.extrasStr ? '\n  Extras: ' + i.extrasStr : ''}\n  Obs: ${i.obs}`;
+    }).join('\n\n');
 
-            // TÍTULO: NOME (BAIRRO)
-            let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()} (${userData.bairro.toUpperCase()})*\n`;
-            msg += `------------------------------------------\n`;
-            msg += `*CLIENTE:* ${userData.nome}\n`;
-            msg += `*BAIRRO:* ${userData.bairro}\n`;
-            msg += `*CONTATO:* ${userData.tel}\n`;
-            msg += `------------------------------------------\n\n${itensMsg}\n\n`;
-            msg += `------------------------------------------\n`;
-            
-            if(userData.bairro !== 'Retirada') {
-                msg += `*END:* ${userData.rua}\n*REF:* ${userData.ponto || '-'}\n*TAXA:* R$ ${userData.taxa.toFixed(2).replace('.',',')}\n`;
-            }
-            
-            msg += `------------------------------------------\n`;
-            msg += `*PAGAMENTO:* ${infoPag}\n*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*`;
-            if(valorTroco) msg += `\n*TROCO PARA: R$ ${valorTroco}*`;
-            
-            window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
-        }
+    // --- LÓGICA DE RETIRADA VS ENTREGA ---
+    let eRetirada = (userData.bairro === 'Retirada' || userData.bairro === 'RETIRADA');
+    
+    // Título muda drasticamente se for retirada
+    let titulo = eRetirada ? `*--- [ RETIRADA NO BALCÃO ] ---*` : `*NOVO PEDIDO: ${userData.nome.toUpperCase()} (${userData.bairro.toUpperCase()})*`;
+    
+    let msg = `${titulo}\n`;
+    msg += `------------------------------------------\n`;
+    msg += `*CLIENTE:* ${userData.nome}\n`;
+    msg += `*CONTATO:* ${userData.tel}\n`;
+    
+    // Se for entrega, mostra bairro e endereço. Se for retirada, pula isso.
+    if(!eRetirada) {
+        msg += `*BAIRRO:* ${userData.bairro}\n`;
+        msg += `*END:* ${userData.rua}\n`;
+        msg += `*REF:* ${userData.ponto || '-'}\n`;
+    }
+    
+    msg += `------------------------------------------\n\n${itensMsg}\n\n`;
+    msg += `------------------------------------------\n`;
+    
+    if(!eRetirada) {
+        msg += `*TAXA:* R$ ${userData.taxa.toFixed(2).replace('.',',')}\n`;
+    } else {
+        msg += `*TIPO:* RETIRADA NO BALCÃO\n`;
+    }
+    
+    msg += `------------------------------------------\n`;
+    msg += `*PAGAMENTO:* ${infoPag}\n*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*`;
+    if(valorTroco) msg += `\n*TROCO PARA: R$ ${valorTroco}*`;
+    
+    window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
+}
 
         // FUNÇÕES DE APOIO CORRIGIDAS
         function chamarAtendenteExtra() {
