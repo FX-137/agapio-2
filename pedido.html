@@ -35,26 +35,30 @@
                 <button onclick="clearMemory()" class="text-[10px] text-gray-400 underline uppercase font-bold">Limpar dados salvos</button>
             </div>
 
-            <div class="flex gap-1 mb-4 bg-gray-100 p-1 rounded-xl">
-    <button onclick="showTab(event, 'tab-lanches')" class="tab-btn flex-1 py-2 text-xs font-black uppercase italic rounded-lg bg-[#E7252A] text-white">Lanches</button>
-    <button onclick="showTab(event, 'tab-bebidas')" class="tab-btn flex-1 py-2 text-xs font-black uppercase italic rounded-lg text-gray-500">Bebidas</button>
-    <button onclick="showTab(event, 'tab-porcoes')" class="tab-btn flex-1 py-2 text-xs font-black uppercase italic rounded-lg text-gray-500">Porções</button>
-<div id="tab-porcoes" class="tab-content hidden grid grid-cols-1 gap-2">
-    <button onclick="selectItem('Porção Mix', 45.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Porção Mix <span>R$ 45,00</span></button>
-    </div>
-            </div>
+            <div id="step2" class="step">
+                <p class="font-bold text-center italic text-sm mb-4">O que vamos pedir hoje?</p>
+                
+                <div class="flex gap-1 mb-4 bg-gray-100 p-1 rounded-xl">
+                    <button onclick="showTab(event, 'tab-lanches')" class="tab-btn flex-1 py-2 text-[10px] font-black uppercase italic rounded-lg bg-[#E7252A] text-white">Lanches</button>
+                    <button onclick="showTab(event, 'tab-bebidas')" class="tab-btn flex-1 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">Bebidas</button>
+                    <button onclick="showTab(event, 'tab-porcoes')" class="tab-btn flex-1 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">Porções</button>
+                </div>
+
                 <div class="max-h-[300px] overflow-y-auto no-scrollbar font-bold italic">
                     <div id="tab-lanches" class="tab-content grid grid-cols-1 gap-2">
                         <button onclick="selectItem('Xis Salada', 18.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Xis Salada <span>R$ 18,00</span></button>
                         <button onclick="selectItem('Xis Tudo', 25.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Xis Tudo <span>R$ 25,00</span></button>
                     </div>
+
                     <div id="tab-bebidas" class="tab-content hidden grid grid-cols-1 gap-2">
                         <button onclick="selectItem('Coca-Cola Lata', 6.00, 'bebida')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Coca-Cola Lata <span>R$ 6,00</span></button>
                     </div>
-                </div>
-            </div>
 
-            <div id="step3" class="step text-center">
+                    <div id="tab-porcoes" class="tab-content hidden grid grid-cols-1 gap-2">
+                        <button onclick="selectItem('Porção Mix', 45.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Porção Mix <span>R$ 45,00</span></button>
+                    </div>
+                </div>
+            </div> <div id="step3" class="step text-center">
                 <p class="font-bold mb-2 text-lg italic uppercase">Item: <span id="itemNome" class="text-[#E7252A]"></span></p>
                 <div class="flex items-center justify-center gap-6 mb-6">
                     <button onclick="updateQty(-1)" class="bg-gray-100 w-12 h-12 rounded-full font-black text-xl border border-gray-200">-</button>
