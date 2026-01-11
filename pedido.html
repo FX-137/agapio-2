@@ -25,7 +25,7 @@
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjIE6oSAmM1W2lR2dxwXO1rqcb9rzVoXAeF_GrSeW6FmSjhFW8vyIgLSPWeCtKMyxiS-9-Uamt4i03spCOsZYTYBX8ttOfl7ISLKRinq9ofmejDVBIwO0M9BOrOsueiuyrXZ934xRZt7aakxOEkPKRh1Gv6JsVvqf2SMXf9DvD8Z4slze43_cYsC3GcFas/s1600/Novo%20banner%20agapio3.webp" class="w-full h-auto block" alt="Agápio Lanches">
         </div>
 
-        <button id="btnVoltar" onclick="prevStep()" class="hidden absolute top-4 left-4 bg-white/80 w-10 h-10 rounded-full shadow-md z-20 flex items-center justify-center border border-gray-200">
+        <button id="btnVoltar" onclick="voltar()" class="hidden absolute ..."> top-4 left-4 bg-white/80 w-10 h-10 rounded-full shadow-md z-20 flex items-center justify-center border border-gray-200">
             <svg class="w-6 h-6 text-[#E7252A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
@@ -152,7 +152,21 @@
         renderizarOpcoesExtras();
     };
 
-    // --- LÓGICA DE NAVEGAÇÃO CORRIGIDA ---
+    // --- FUNÇÃO VOLTAR (Agora com o nome certo) ---
+    function voltar() {
+        if (window.currentStep === 'Carrinho') {
+            goStep(2);
+        } else if (window.currentStep === 2) {
+            goStep(1);
+        } else if (window.currentStep === 3) {
+            goStep(2);
+        } else if (window.currentStep === 4) {
+            goStep('Carrinho');
+        } else if (window.currentStep === 5) {
+            goStep(4);
+        }
+    }
+
     function goStep(n) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         const target = n === 'Carrinho' ? 'stepCarrinho' : 'step' + n;
@@ -160,18 +174,9 @@
         if (targetEl) {
             targetEl.classList.add('active');
             window.currentStep = n;
-            // Mostra/Esconde botão voltar
             const btnVoltar = document.getElementById('btnVoltar');
             if(btnVoltar) btnVoltar.classList.toggle('hidden', n === 1);
             window.scrollTo(0,0);
-        }
-    }
-
-    function voltar() {
-        if (window.currentStep === 'Carrinho') {
-            goStep(2); // Volta do carrinho para o cardápio
-        } else if (typeof window.currentStep === 'number' && window.currentStep > 1) {
-            goStep(window.currentStep - 1);
         }
     }
 
@@ -184,22 +189,21 @@
         goStep(2);
     }
 
-    // --- SELEÇÃO DE ITEM (CORRIGINDO OBSERVAÇÕES E PLACEHOLDER) ---
+    // --- SELEÇÃO DE ITEM (LIMPANDO OBSERVAÇÕES CORRETAMENTE) ---
     function selectItem(nome, preco, tipo) {
         tempItem = { nome, preco, qty: 1, tipo: tipo, extras: [] };
         document.getElementById('itemNome').innerText = nome;
         document.getElementById('qty').innerText = 1;
         
-        // Limpa a caixa de observação para cada novo lanche
-        const obsInput = document.getElementById('itemObs');
-        obsInput.value = ''; 
+        // FORÇANDO A LIMPEZA DA CAIXA DE TEXTO
+        const campoObs = document.getElementById('itemObs');
+        campoObs.value = ''; 
         
-        // Muda o texto de ajuda (placeholder) conforme o tipo
         if(tipo === 'bebida') {
-            obsInput.placeholder = "Alguma preferência? (Ex: Gelada, copo com gelo...)";
+            campoObs.placeholder = "Ex: Gelada, com gelo, sem açúcar...";
             document.getElementById('btnExtra').classList.add('hidden');
         } else {
-            obsInput.placeholder = "Alguma observação? (Ex: Sem cebola, maionese à parte...)";
+            campoObs.placeholder = "Ex: Sem cebola, maionese à parte...";
             document.getElementById('btnExtra').classList.remove('hidden');
         }
 
@@ -210,11 +214,6 @@
         });
 
         goStep(3);
-    }
-
-    function updateQty(val) {
-        tempItem.qty = Math.max(1, tempItem.qty + val);
-        document.getElementById('qty').innerText = tempItem.qty;
     }
 
     function addToCart() {
@@ -260,7 +259,7 @@
     function abrirModalExtras() { document.getElementById('modalExtras').classList.replace('hidden', 'flex'); }
     function fecharModalExtras() { document.getElementById('modalExtras').classList.replace('flex', 'hidden'); }
 
-    // --- CARRINHO E FINALIZAÇÃO (CORRIGINDO TROCO E CARTÕES) ---
+    // --- FINALIZAÇÃO (CORRIGINDO CARTÕES E TROCO) ---
     function renderCarrinho() {
         const container = document.getElementById('listaCarrinho');
         container.innerHTML = carrinho.map((item, index) => `
@@ -290,20 +289,19 @@
         let infoPagamento = pag;
 
         if (pag === 'Dinheiro') {
-            const troco = prompt(`TOTAL DO PEDIDO: R$ ${total.toFixed(2).replace('.',',')}\n\nTroco para quanto? (Deixe em branco se não precisar)`);
+            const troco = prompt(`VALOR TOTAL: R$ ${total.toFixed(2).replace('.',',')}\n\nTroco para quanto? (Deixe em branco se não precisar)`);
             if (troco) infoPagamento = `Dinheiro (Troco para R$ ${troco})`;
         } 
         else if (pag === 'Cartão') {
-            const tipoCard = prompt("Qual a bandeira do cartão?\n(Ex: Visa, Master, Elo, Banricompras...)");
-            infoPagamento = `Cartão (${tipoCard || 'Não informado'})`;
+            const tipoCard = prompt("Qual a bandeira do cartão?\n(Ex: Visa, Master, Elo, Banri...)");
+            if (tipoCard) infoPagamento = `Cartão (${tipoCard})`;
         }
 
         let itensMsg = carrinho.map(i => `> *${i.qty}x ${i.nome}*\n${i.extrasStr ? '  Extras: '+i.extrasStr+'\n' : ''}  Obs: ${i.obs}`).join('\n\n');
         
         let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()}*\n`;
         msg += `------------------------------------------\n`;
-        msg += `*CLIENTE:* ${userData.nome}\n*CONTATO:* ${userData.tel}\n`;
-        msg += `*BAIRRO:* ${userData.bairro}\n`;
+        msg += `*CLIENTE:* ${userData.nome}\n*CONTATO:* ${userData.tel}\n*BAIRRO:* ${userData.bairro}\n`;
         if(userData.bairro !== 'Retirada') msg += `*END:* ${userData.rua}\n*REF:* ${userData.ponto || '-'}\n*TAXA:* R$ ${userData.taxa.toFixed(2).replace('.',',')}\n`;
         msg += `------------------------------------------\n\n${itensMsg}\n\n`;
         msg += `------------------------------------------\n*PAGAMENTO:* ${infoPagamento}\n*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*`;
@@ -318,8 +316,9 @@
         document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('bg-[#E7252A]', 'text-white'); b.classList.add('text-gray-500'); });
         event.currentTarget.classList.add('bg-[#E7252A]', 'text-white');
     }
+    function updateQty(val) { tempItem.qty = Math.max(1, tempItem.qty + val); document.getElementById('qty').innerText = tempItem.qty; }
     function removeItem(index) { if(confirm("Remover?")) { carrinho.splice(index, 1); renderCarrinho(); if(carrinho.length===0) goStep(2); } }
-    function chamarAtendenteExtra() { if(confirm("Deseja falar com o atendente para itens personalizados?")) window.open(`https://wa.me/5551992141406?text=Olá! Quero um item extra não listado.`); }
+    function chamarAtendenteExtra() { if(confirm("Deseja falar com o atendente?")) window.open(`https://wa.me/5551992141406?text=Quero algo não listado.`); }
 </script>
    <div id="modalExtras" class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-6 shadow-2xl border-4 border-[#E7252A]">
