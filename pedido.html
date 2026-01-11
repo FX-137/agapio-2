@@ -39,7 +39,10 @@
     <button onclick="showTab(event, 'tab-lanches')" class="tab-btn flex-1 py-2 text-xs font-black uppercase italic rounded-lg bg-[#E7252A] text-white">Lanches</button>
     <button onclick="showTab(event, 'tab-bebidas')" class="tab-btn flex-1 py-2 text-xs font-black uppercase italic rounded-lg text-gray-500">Bebidas</button>
     <button onclick="showTab(event, 'tab-porcoes')" class="tab-btn flex-1 py-2 text-xs font-black uppercase italic rounded-lg text-gray-500">Porções</button>
-</div>
+<div id="tab-porcoes" class="tab-content hidden grid grid-cols-1 gap-2">
+    <button onclick="selectItem('Porção Mix', 45.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Porção Mix <span>R$ 45,00</span></button>
+    </div>
+            </div>
                 <div class="max-h-[300px] overflow-y-auto no-scrollbar font-bold italic">
                     <div id="tab-lanches" class="tab-content grid grid-cols-1 gap-2">
                         <button onclick="selectItem('Xis Salada', 18.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Xis Salada <span>R$ 18,00</span></button>
