@@ -346,8 +346,6 @@ function fecharModalExtras() {
     }
 
     let itensMsg = carrinho.map(i => `> *${i.qty}x ${i.nome}*\n  Obs: ${i.obs}`).join('\n\n');
-        
-        // --- MENSAGEM REORGANIZADA PARA FACILITAR A AGENDA ---
         let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()} (${userData.bairro.toUpperCase()})*\n`;
         msg += `------------------------------------------\n`;
         msg += `*CLIENTE:* ${userData.nome}\n`;
@@ -374,6 +372,7 @@ function fecharModalExtras() {
     }
 
     function clearMemory() { if(confirm("Apagar dados?")) { localStorage.clear(); location.reload(); } }
+        }
     </script>
 </body>
 </html>
