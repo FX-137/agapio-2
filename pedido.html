@@ -373,6 +373,44 @@ function fecharModalExtras() {
                 location.reload(); 
             } 
         }
-    </script>
+        function showTab(e, id) {
+        // 1. Esconde todos os conteúdos de abas
+        document.querySelectorAll('.tab-content').forEach(c => {
+            c.classList.add('hidden');
+        });
+
+        // 2. Mostra a aba que foi clicada
+        const target = document.getElementById(id);
+        if (target) {
+            target.classList.remove('hidden');
+        }
+
+        // 3. Reseta a cor de todos os botões
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.remove('bg-[#E7252A]', 'text-white');
+            b.classList.add('text-gray-500');
+        });
+
+        // 4. Pinta de vermelho o botão atual
+        if (e && e.currentTarget) {
+            e.currentTarget.classList.add('bg-[#E7252A]', 'text-white');
+            e.currentTarget.classList.remove('text-gray-500');
+        }
+    }
+
+    // --- FUNÇÕES DE APOIO ---
+    function chamarAtendenteExtra() {
+        if(confirm("Deseja falar com o atendente para adicionar itens extras?")) {
+            window.open(`https://wa.me/5551992141406?text=Olá! Quero adicionar itens extras ao meu pedido.`);
+        }
+    }
+
+    function clearMemory() { 
+        if(confirm("Apagar dados?")) { 
+            localStorage.clear(); 
+            location.reload(); 
+        } 
+    }
+</script>
 </body>
 </html>
