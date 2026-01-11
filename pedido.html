@@ -123,12 +123,13 @@
     </div>
 
    <script>
+    // 1. VARIÁVEIS GLOBAIS
     let userData = { nome: '', tel: '', rua: '', ponto: '', bairro: '', taxa: 0 };
     let carrinho = [];
     let tempItem = { nome: '', preco: 0, qty: 1, tipo: '', extras: [] };
     window.currentStep = 1;
 
-    // LISTA DE EXTRAS DO ARQUIVO "ADICIONAR" 
+    // 2. LISTA DE EXTRAS
     const LISTA_EXTRAS = [
         { nome: "Alcaparras", preco: 6.00 }, { nome: "Aspargos", preco: 6.00 },
         { nome: "Alface", preco: 6.00 }, { nome: "Azeitona", preco: 6.00 },
@@ -140,27 +141,21 @@
         { nome: "Provolone", preco: 6.00 }, { nome: "Queijo", preco: 6.00 }
     ];
 
+    // 3. INICIALIZAÇÃO
     window.onload = () => {
         const saved = localStorage.getItem('agapio_user');
         if(saved) {
             const u = JSON.parse(saved);
-            document.getElementById('nome').value = u.nome || '';
-            document.getElementById('telefone').value = u.tel || '';
-            document.getElementById('rua').value = u.rua || '';
-            document.getElementById('ponto').value = u.ponto || '';
+            if(document.getElementById('nome')) document.getElementById('nome').value = u.nome || '';
+            if(document.getElementById('telefone')) document.getElementById('telefone').value = u.tel || '';
+            if(document.getElementById('rua')) document.getElementById('rua').value = u.rua || '';
+            if(document.getElementById('ponto')) document.getElementById('ponto').value = u.ponto || '';
             userData = {...userData, ...u};
         }
         renderizarOpcoesExtras();
     };
 
-    function saveUserAndNext() {
-        userData.nome = document.getElementById('nome').value;
-        userData.tel = document.getElementById('telefone').value;
-        if(!userData.nome || !userData.tel) return alert("Preencha nome e WhatsApp!");
-        updateLS(); 
-        goStep(2);
-    }
-
+    // 4. NAVEGAÇÃO (A engrenagem principal)
     function goStep(n) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         const target = n === 'Carrinho' ? 'stepCarrinho' : 'step' + n;
@@ -170,19 +165,70 @@
             window.currentStep = n;
             const btnVoltar = document.getElementById('btnVoltar');
             if(btnVoltar) btnVoltar.classList.toggle('hidden', n === 1);
+            window.scrollTo(0,0);
         }
     }
 
+    function saveUserAndNext() {
+        const n = document.getElementById('nome').value;
+        const t = document.getElementById('telefone').value;
+        if(!n || !t) return alert("Preencha nome e WhatsApp!");
+        userData.nome = n; userData.tel = t;
+        updateLS(); 
+        goStep(2);
+    }
+
+    // 5. LÓGICA DO CARDÁPIO
+    function selectItem(nome, preco, tipo) {
+        tempItem = { nome, preco, qty: 1, tipo: tipo, extras: [] };
+        document.getElementById('itemNome').innerText = nome;
+        document.getElementById('qty').innerText = 1;
+        document.getElementById('itemObs').value = '';
+        
+        // Reseta visual dos extras
+        document.querySelectorAll('[id^="btnExtra-"]').forEach(btn => {
+            btn.classList.replace('border-[#E7252A]', 'border-gray-100');
+            btn.classList.remove('bg-red-50');
+        });
+
+        const btnExtra = document.getElementById('btnExtra');
+        if (tipo === 'bebida') btnExtra.classList.add('hidden');
+        else btnExtra.classList.remove('hidden');
+
+        goStep(3);
+    }
+
+    function updateQty(val) {
+        tempItem.qty = Math.max(1, tempItem.qty + val);
+        document.getElementById('qty').innerText = tempItem.qty;
+    }
+
+    function addToCart() {
+        const obsInput = document.getElementById('itemObs');
+        const obsValue = obsInput ? obsInput.value : 'Sem observações';
+        
+        const extrasNomes = tempItem.extras.map(e => e.nome).join(', ');
+        const custoExtras = tempItem.extras.reduce((total, e) => total + e.preco, 0);
+        
+        carrinho.push({ 
+            ...tempItem, 
+            precoTotal: (tempItem.preco + custoExtras),
+            obs: obsValue || 'Sem observações',
+            extrasStr: extrasNomes 
+        });
+        
+        renderCarrinho();
+        goStep('Carrinho');
+    }
+
+    // 6. EXTRAS (MODAL)
     function renderizarOpcoesExtras() {
         const container = document.getElementById('listaExtrasOpcoes');
         if(!container) return;
-        container.innerHTML = '';
-        LISTA_EXTRAS.forEach(extra => {
-            container.innerHTML += `
-                <button onclick="toggleExtra('${extra.nome}', ${extra.preco})" id="btnExtra-${extra.nome}" class="p-2 border-2 border-gray-100 rounded-xl text-[11px] font-bold bg-white transition-all">
-                    ${extra.nome}<br><span class="text-[#E7252A]">R$ ${extra.preco.toFixed(2)}</span>
-                </button>`;
-        });
+        container.innerHTML = LISTA_EXTRAS.map(extra => `
+            <button onclick="toggleExtra('${extra.nome}', ${extra.preco})" id="btnExtra-${extra.nome}" class="p-2 border-2 border-gray-100 rounded-xl text-[11px] font-bold bg-white transition-all">
+                ${extra.nome}<br><span class="text-[#E7252A]">R$ ${extra.preco.toFixed(2)}</span>
+            </button>`).join('');
     }
 
     function toggleExtra(nome, preco) {
@@ -199,119 +245,26 @@
         }
     }
 
-    function abrirModalExtras() {
-        document.getElementById('modalExtras').classList.replace('hidden', 'flex');
-    }
+    function abrirModalExtras() { document.getElementById('modalExtras').classList.replace('hidden', 'flex'); }
+    function fecharModalExtras() { document.getElementById('modalExtras').classList.replace('flex', 'hidden'); }
 
-    function fecharModalExtras() {
-        document.getElementById('modalExtras').classList.replace('flex', 'hidden');
-    }
-
-    function selectItem(nome, preco, tipo) {
-        tempItem = { nome, preco, qty: 1, tipo: tipo, extras: [] };
-        document.getElementById('itemNome').innerText = nome;
-        document.getElementById('qty').innerText = 1;
-        document.getElementById('itemObs').value = '';
-        
-        // Limpar visual dos extras anteriores
-        document.querySelectorAll('[id^="btnExtra-"]').forEach(btn => {
-            btn.classList.replace('border-[#E7252A]', 'border-gray-100');
-            btn.classList.remove('bg-red-50');
-        });
-
-        const btnExtra = document.getElementById('btnExtra');
-        if (tipo === 'bebida') btnExtra.classList.add('hidden');
-        else {
-            btnExtra.classList.remove('hidden');
-            btnExtra.onclick = abrirModalExtras; // Garante que abra o modal novo
-        }
-        goStep(3);
-    }
-
-    function addToCart() {
-    const obsCampo = document.getElementById('itemObs');
-    const obs = obsCampo ? obsCampo.value : 'Sem observações';
-    
-    const extrasNomes = tempItem.extras.map(e => e.nome).join(', ');
-    const custoExtras = tempItem.extras.reduce((total, e) => total + e.preco, 0);
-    
-    carrinho.push({ 
-        ...tempItem, 
-        precoTotal: (tempItem.preco + custoExtras),
-        obs: obs || 'Sem observações',
-        extrasStr: extrasNomes 
-    });
-    
-    renderCarrinho();
-    goStep('Carrinho');
-}
-
-function finishOrder(pag) {
-    let subtotal = carrinho.reduce((sum, i) => sum + (i.precoTotal * i.qty), 0);
-    let total = subtotal + userData.taxa;
-    let textoTroco = "";
-
-    if (pag === 'Dinheiro') {
-        const trocoPara = prompt("Troco para quanto? (Deixe em branco se não precisar)");
-        if (trocoPara && trocoPara.trim() !== "") {
-            textoTroco = `\n*TROCO PARA:* R$ ${trocoPara}`;
-        }
-    }
-
-    let itensMsg = carrinho.map(i => {
-        let res = `> *${i.qty}x ${i.nome}*\n`;
-        if(i.extrasStr) res += `  Extras: ${i.extrasStr}\n`;
-        res += `  Obs: ${i.obs}`;
-        return res;
-    }).join('\n\n');
-    
-    let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()} (${userData.bairro.toUpperCase()})*\n`;
-    msg += `------------------------------------------\n`;
-    msg += `*CLIENTE:* ${userData.nome}\n*BAIRRO:* ${userData.bairro}\n*CONTATO:* ${userData.tel}\n`;
-    msg += `------------------------------------------\n\n${itensMsg}\n\n`;
-    msg += `------------------------------------------\n`;
-    if(userData.bairro !== 'Retirada') {
-        msg += `*END:* ${userData.rua}\n*REF:* ${userData.ponto || '-'}\n*TAXA:* R$ ${userData.taxa.toFixed(2).replace('.',',')}\n`;
-    }
-    msg += `------------------------------------------\n*PAGAMENTO:* ${pag}${textoTroco}\n*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*`;
-    
-    window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
-}
-    }
-
-    // Mantive as funções auxiliares originais (showTab, updateQty, selectBairro, etc.) abaixo desta linha...
-    function showTab(event, tabId) {
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-        document.getElementById(tabId).classList.remove('hidden');
-        document.querySelectorAll('.tab-btn').forEach(b => {
-            b.classList.remove('bg-[#E7252A]', 'text-white');
-            b.classList.add('text-gray-500');
-        });
-        event.currentTarget.classList.add('bg-[#E7252A]', 'text-white');
-    }
-    
-    function updateQty(val) {
-        tempItem.qty = Math.max(1, tempItem.qty + val);
-        document.getElementById('qty').innerText = tempItem.qty;
-    }
-
-    function removeItem(index) {
-        if(confirm("Remover este item?")) {
-            carrinho.splice(index, 1);
-            renderCarrinho();
-            if(carrinho.length === 0) goStep(2);
-        }
+    // 7. CARRINHO E FINALIZAÇÃO
+    function renderCarrinho() {
+        const container = document.getElementById('listaCarrinho');
+        container.innerHTML = carrinho.map((item, index) => `
+            <div onclick="removeItem(${index})" class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-200 text-sm mb-2">
+                <div class="text-left">
+                    <p class="font-bold">${item.qty}x ${item.nome}</p>
+                    <p class="text-[10px] text-gray-400 italic">${item.extrasStr ? 'EXTRAS: '+item.extrasStr+' | ' : ''}${item.obs}</p>
+                </div>
+                <span class="text-red-500 font-bold text-xs uppercase">Remover</span>
+            </div>`).join('');
     }
 
     function selectBairro(b, taxa) {
-        const ruaInput = document.getElementById('rua').value.trim();
-        if (b !== 'Retirada' && ruaInput === "") {
-            alert("Informe Rua e Número antes de selecionar o bairro!");
-            return;
-        }
-        userData.bairro = b; 
-        userData.taxa = taxa;
-        userData.rua = ruaInput;
+        const r = document.getElementById('rua').value.trim();
+        if (b !== 'Retirada' && r === "") return alert("Informe Rua e Número primeiro!");
+        userData.bairro = b; userData.taxa = taxa; userData.rua = r;
         userData.ponto = document.getElementById('ponto').value;
         updateLS();
         let subtotal = carrinho.reduce((sum, item) => sum + (item.precoTotal * item.qty), 0);
@@ -322,24 +275,36 @@ function finishOrder(pag) {
     function finishOrder(pag) {
         let subtotal = carrinho.reduce((sum, i) => sum + (i.precoTotal * i.qty), 0);
         let total = subtotal + userData.taxa;
-        let itensMsg = carrinho.map(i => {
-            let res = `> *${i.qty}x ${i.nome}*\n`;
-            if(i.extrasStr) res += `  Extras: ${i.extrasStr}\n`;
-            res += `  Obs: ${i.obs}`;
-            return res;
-        }).join('\n\n');
+        let trocoMsg = "";
+
+        if (pag === 'Dinheiro') {
+            const troco = prompt("Troco para quanto?");
+            if (troco) trocoMsg = `\n*TROCO PARA:* R$ ${troco}`;
+        }
+
+        let itensMsg = carrinho.map(i => `> *${i.qty}x ${i.nome}*\n${i.extrasStr ? '  Extras: '+i.extrasStr+'\n' : ''}  Obs: ${i.obs}`).join('\n\n');
         
-        let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()} (${userData.bairro.toUpperCase()})*\n`;
+        let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()}*\n`;
         msg += `------------------------------------------\n`;
-        msg += `*CLIENTE:* ${userData.nome}\n*BAIRRO:* ${userData.bairro}\n*CONTATO:* ${userData.tel}\n`;
-        msg += `------------------------------------------\n\n${itensMsg}\n\n`;
-        msg += `------------------------------------------\n`;
+        msg += `*CLIENTE:* ${userData.nome}\n*CONTATO:* ${userData.tel}\n`;
+        msg += `*BAIRRO:* ${userData.bairro}\n`;
         if(userData.bairro !== 'Retirada') msg += `*END:* ${userData.rua}\n*REF:* ${userData.ponto || '-'}\n*TAXA:* R$ ${userData.taxa.toFixed(2).replace('.',',')}\n`;
-        msg += `------------------------------------------\n*PAGAMENTO:* ${pag}\n*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*`;
+        msg += `------------------------------------------\n\n${itensMsg}\n\n`;
+        msg += `------------------------------------------\n*PAGAMENTO:* ${pag}${trocoMsg}\n*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*`;
+        
         window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
     }
 
-    function clearMemory() { if(confirm("Apagar dados?")) { localStorage.clear(); location.reload(); } }
+    // UTILITÁRIOS
+    function updateLS() { localStorage.setItem('agapio_user', JSON.stringify(userData)); }
+    function showTab(event, tabId) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+        document.getElementById(tabId).classList.remove('hidden');
+        document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('bg-[#E7252A]', 'text-white'); b.classList.add('text-gray-500'); });
+        event.currentTarget.classList.add('bg-[#E7252A]', 'text-white');
+    }
+    function removeItem(index) { if(confirm("Remover?")) { carrinho.splice(index, 1); renderCarrinho(); if(carrinho.length===0) goStep(2); } }
+    function chamarAtendenteExtra() { if(confirm("Falar com atendente?")) window.open(`https://wa.me/5551992141406?text=Quero adicionais extras.`); }
 </script>
    <div id="modalExtras" class="hidden fixed inset-0 bg-black/60 z-50 items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-6 shadow-2xl border-4 border-[#E7252A]">
