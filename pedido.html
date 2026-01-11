@@ -238,83 +238,25 @@ function updateQty(v) {
             goStep('Carrinho');
         }
 
-        function renderCarrinho() {
+       function renderCarrinho() {
     const c = document.getElementById('listaCarrinho');
     c.innerHTML = carrinho.map((item, i) => {
-        // Cria a linha de extras se houver algum
-        const linhaExtras = item.extrasStr ? `<p class="text-[10px] text-orange-600 font-bold uppercase">+ EXTRAS: ${item.extrasStr}</p>` : '';
+        // Adicionamos um margin-top (mt-1) para dar o "respiro" que faltava
+        const linhaExtras = item.extrasStr ? `<p class="text-[10px] text-orange-600 font-bold uppercase mt-1">+ EXTRAS: ${item.extrasStr}</p>` : '';
         
         return `
             <div onclick="removeItem(${i})" class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-sm flex justify-between items-center mb-2">
                 <div class="text-left">
                     <p class="font-bold">${item.qty}x ${item.nome} <span class="text-[#E7252A]">R$ ${(item.totalUnit * item.qty).toFixed(2).replace('.',',')}</span></p>
                     ${linhaExtras}
-                    <p class="text-[10px] text-gray-400 italic">Obs: ${item.obs}</p>
+                    <p class="text-[10px] text-gray-400 italic mt-1">Obs: ${item.obs}</p>
                 </div>
                 <span class="text-red-500 font-black text-[10px] ml-2">REMOVER</span>
             </div>`;
     }).join('');
 }
 
-        function removeItem(i) { if(confirm("Remover?")) { carrinho.splice(i,1); renderCarrinho(); if(!carrinho.length) goStep(2); } }
-
-        function selectBairro(b, taxa) {
-            const r = document.getElementById('rua').value.trim();
-            if(b !== 'Retirada' && !r) return alert("Informe a rua!");
-            userData.bairro = b; userData.taxa = taxa; userData.rua = r;
-            userData.ponto = document.getElementById('ponto').value;
-            let sub = carrinho.reduce((s, i) => s + (i.totalUnit * i.qty), 0);
-            document.getElementById('resumoTotal').innerText = `R$ ${(sub + taxa).toFixed(2).replace('.',',')}`;
-            goStep(5);
-        }
-
-        function renderizarOpcoesExtras() {
-            const cont = document.getElementById('listaExtrasOpcoes');
-            cont.innerHTML = LISTA_EXTRAS.map(e => `
-                <button onclick="toggleExtra('${e.n}', ${e.p})" id="ex-${e.n}" class="btn-extra p-2 border-2 border-gray-100 rounded-xl text-[10px] font-bold bg-white italic">
-                    ${e.n}<br><span class="text-[#E7252A]">R$ ${e.p.toFixed(2)}</span>
-                </button>`).join('');
-        }
-
-       function toggleExtra(n, p) {
-    const idx = tempItem.extras.findIndex(e => e.n === n);
-    const btn = document.getElementById(`ex-${n}`);
-    const feedback = document.getElementById('feedbackExtras');
-
-    if(idx > -1) { 
-        tempItem.extras.splice(idx,1); 
-        btn.classList.remove('bg-red-50', 'border-[#E7252A]'); 
-    }
-    else { 
-        tempItem.extras.push({n, p}); 
-        btn.classList.add('bg-red-50', 'border-[#E7252A]'); 
-    }
-
-    // Atualiza o texto de aviso no modal
-    if(tempItem.extras.length > 0) {
-        const nomes = tempItem.extras.map(e => e.n).join(', ');
-        feedback.innerHTML = `<span class="text-green-600">Adicionado: ${nomes}</span>`;
-    } else {
-        feedback.innerText = "Nenhum extra selecionado";
-    }
-}
-
-       function abrirModalExtras() { 
-    // Limpa o texto de feedback para começar do zero
-    const feedback = document.getElementById('feedbackExtras');
-    if (feedback) {
-        feedback.innerText = "Nenhum extra selecionado";
-        feedback.classList.remove('text-green-600');
-        feedback.classList.add('text-gray-500');
-    }
-    document.getElementById('modalExtras').classList.remove('hidden'); 
-}
-
-function fecharModalExtras() { 
-    document.getElementById('modalExtras').classList.add('hidden'); 
-}
-
-        function finishOrder(pag) {
+function finishOrder(pag) {
     let sub = carrinho.reduce((s, i) => s + (i.totalUnit * i.qty), 0);
     let tot = sub + userData.taxa;
     let infoPag = pag;
@@ -323,30 +265,23 @@ function fecharModalExtras() {
         const troco = prompt(`Total: R$ ${tot.toFixed(2).replace('.',',')}\nTroco para quanto? (Deixe vazio se não precisar)`);
         if(troco) infoPag += ` (Troco para R$ ${troco})`;
     } else if(pag === 'Cartão') {
-        // Menu numerado para agilizar
-        const cardNum = prompt(
-            "QUAL A BANDEIRA?\n" +
-            "1 - Visa\n" +
-            "2 - Master\n" +
-            "3 - Elo\n" +
-            "4 - Banri\n" +
-            "5 - Hiper\n" +
-            "Digite o NÚMERO ou o nome:"
-        );
-
+        const cardNum = prompt("QUAL A BANDEIRA?\n1-Visa\n2-Master\n3-Elo\n4-Banri\n5-Hiper\nDigite o número:");
         let bandeira = "";
         if(cardNum === "1") bandeira = "Visa";
         else if(cardNum === "2") bandeira = "Master";
         else if(cardNum === "3") bandeira = "Elo";
         else if(cardNum === "4") bandeira = "Banri";
         else if(cardNum === "5") bandeira = "Hiper";
-        else if(cardNum) bandeira = cardNum; // Aceita se digitar o nome
-
+        else if(cardNum) bandeira = cardNum;
         if(bandeira) infoPag += ` (${bandeira})`;
     }
 
     let itens = carrinho.map(i => `*${i.qty}x ${i.nome}*\n${i.extrasStr ? 'Extras: '+i.extrasStr+'\n' : ''}Obs: ${i.obs}`).join('\n\n');
-    let msg = `*NOVO PEDIDO: ${userData.nome.toUpperCase()}* \n---------------------------\n${itens}\n---------------------------\n*BAIRRO:* ${userData.bairro}\n*END:* ${userData.rua}\n*PAGAMENTO:* ${infoPag}\n*TOTAL: R$ ${tot.toFixed(2).replace('.',',')}*`;
+    
+    // TÍTULO ATUALIZADO: NOME (BAIRRO)
+    let cabecalho = `*NOVO PEDIDO: ${userData.nome.toUpperCase()} (${userData.bairro.toUpperCase()})*`;
+    
+    let msg = `${cabecalho}\n---------------------------\n${itens}\n---------------------------\n*BAIRRO:* ${userData.bairro}\n*END:* ${userData.rua}\n*PAGAMENTO:* ${infoPag}\n*TOTAL: R$ ${tot.toFixed(2).replace('.',',')}*`;
     
     window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
 }
