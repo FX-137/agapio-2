@@ -6,6 +6,12 @@
     <title>Agápio Lanches - Pedido</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+.blink { animation: blink 1s infinite; }
         .step { display: none; }
         .step.active { display: block; animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -86,6 +92,9 @@
                 <input type="text" id="rua" class="w-full bg-gray-50 border-2 border-gray-200 p-4 rounded-2xl mb-2 font-bold outline-none focus:border-[#E7252A]" placeholder="Rua e Número">
                 <input type="text" id="ponto" class="w-full bg-gray-50 border-2 border-gray-200 p-4 rounded-2xl mb-4 font-bold outline-none focus:border-[#E7252A]" placeholder="Ref / Apto">
                 <div class="grid grid-cols-1 gap-2 max-h-[150px] overflow-y-auto no-scrollbar">
+                    <p class="text-[#E7252A] font-black text-xs uppercase italic mb-2 blink text-center">
+    ⚠️ Selecione o seu bairro abaixo:
+</p>
                     <button onclick="selectBairro('Azenha', 9.00)" class="btn-option p-3 rounded-xl font-bold flex justify-between bg-gray-50 text-sm italic">Azenha <span>+R$ 9,00</span></button>
                     <button onclick="selectBairro('Centro', 11.00)" class="btn-option p-3 rounded-xl font-bold flex justify-between bg-gray-50 text-sm italic">Centro <span>+R$ 11,00</span></button>
                     <button onclick="selectBairro('Retirada', 0.00)" class="btn-option p-3 rounded-xl font-bold text-green-600 bg-green-50 text-sm italic">Vou Retirar no Local</button>
