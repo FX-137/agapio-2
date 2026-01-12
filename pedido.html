@@ -44,18 +44,28 @@
             <div id="step2" class="step">
                 <p class="font-bold text-center italic text-[10px] mb-2 text-gray-400 uppercase">Arraste para o lado para ver mais categorias ➔</p>
                 
-                <div class="flex gap-2 mb-4 bg-gray-100 p-1 rounded-xl overflow-x-auto no-scrollbar flex-nowrap shadow-inner">
-                    <button onclick="showTab(event, 'tab-lanches')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg bg-[#E7252A] text-white">01. Lanches</button>
-                    <button onclick="showTab(event, 'tab-bebidas')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">02. Bebidas</button>
-                    <button onclick="showTab(event, 'tab-porcoes')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">03. Porções</button>
-                    <button onclick="showTab(event, 'tab-especiais')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">04. Especiais</button>
-                    <button onclick="showTab(event, 'tab-baurus')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">05. Baurus</button>
-                    <button onclick="showTab(event, 'tab-hotdogs')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">06. Hot-Dogs</button>
-                    <button onclick="showTab(event, 'tab-torradas')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">07. Torradas</button>
-                    <button onclick="showTab(event, 'tab-combos')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">08. Combos</button>
-                    <button onclick="showTab(event, 'tab-doces')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">09. Doces</button>
-                    <button onclick="showTab(event, 'tab-outros')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">10. Outros</button>
-                </div>
+                <div class="relative flex items-center group mb-4">
+    <button onclick="sideScroll('scrollContainer', 'left')" class="absolute left-0 z-10 bg-white/80 shadow-md rounded-full p-1 hover:bg-white hidden md:block border border-gray-200">
+        <svg class="w-5 h-5 text-[#E7252A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+
+    <div id="scrollContainer" class="flex gap-2 bg-gray-100 p-1 rounded-xl overflow-x-auto no-scrollbar flex-nowrap shadow-inner scroll-smooth w-full">
+        <button onclick="showTab(event, 'tab-lanches')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg bg-[#E7252A] text-white">01. Lanches</button>
+        <button onclick="showTab(event, 'tab-bebidas')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">02. Bebidas</button>
+        <button onclick="showTab(event, 'tab-porcoes')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">03. Porções</button>
+        <button onclick="showTab(event, 'tab-especiais')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">04. Especiais</button>
+        <button onclick="showTab(event, 'tab-baurus')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">05. Baurus</button>
+        <button onclick="showTab(event, 'tab-hotdogs')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">06. Hot-Dogs</button>
+        <button onclick="showTab(event, 'tab-torradas')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">07. Torradas</button>
+        <button onclick="showTab(event, 'tab-combos')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">08. Combos</button>
+        <button onclick="showTab(event, 'tab-doces')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">09. Doces</button>
+        <button onclick="showTab(event, 'tab-outros')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">10. Outros</button>
+    </div>
+
+    <button onclick="sideScroll('scrollContainer', 'right')" class="absolute right-0 z-10 bg-white/80 shadow-md rounded-full p-1 hover:bg-white hidden md:block border border-gray-200">
+        <svg class="w-5 h-5 text-[#E7252A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+    </button>
+</div>
 
                 <div class="max-h-[300px] overflow-y-auto no-scrollbar font-bold italic">
                     <div id="tab-lanches" class="tab-content grid grid-cols-1 gap-2">
@@ -302,6 +312,15 @@
         }
 
         function clearMemory() { if(confirm("Apagar dados?")) { localStorage.clear(); location.reload(); } }
+        function sideScroll(id, direction) {
+    const container = document.getElementById(id);
+    const scrollAmount = 150; // Quanto ele desliza por clique
+    if (direction === 'left') {
+        container.scrollLeft -= scrollAmount;
+    } else {
+        container.scrollLeft += scrollAmount;
+    }
+}
     </script>
 </body>
 </html>
