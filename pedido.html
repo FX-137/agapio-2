@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Agápio Lanches - Pedido</title>
+    <title>Agápio Lanches - Template Mestre</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.3; }
-    100% { opacity: 1; }
-}
-.blink { animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .blink { animation: blink 1s infinite; }
         .step { display: none; }
         .step.active { display: block; animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* CSS PARA SLIDER DE CATEGORIAS */
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
         .btn-option { border: 2px solid #f3f4f6; transition: 0.2s; }
         .btn-option:active { border-color: #E7252A; transform: scale(0.98); }
     </style>
@@ -42,29 +42,45 @@
             </div>
 
             <div id="step2" class="step">
-                <p class="font-bold text-center italic text-sm mb-4">O que vamos pedir hoje?</p>
+                <p class="font-bold text-center italic text-[10px] mb-2 text-gray-400 uppercase">Arraste para o lado para ver mais categorias ➔</p>
                 
-                <div class="flex gap-1 mb-4 bg-gray-100 p-1 rounded-xl">
-                    <button onclick="showTab(event, 'tab-lanches')" class="tab-btn flex-1 py-2 text-[10px] font-black uppercase italic rounded-lg bg-[#E7252A] text-white">Lanches</button>
-                    <button onclick="showTab(event, 'tab-bebidas')" class="tab-btn flex-1 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">Bebidas</button>
-                    <button onclick="showTab(event, 'tab-porcoes')" class="tab-btn flex-1 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">Porções</button>
+                <div class="flex gap-2 mb-4 bg-gray-100 p-1 rounded-xl overflow-x-auto no-scrollbar flex-nowrap shadow-inner">
+                    <button onclick="showTab(event, 'tab-lanches')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg bg-[#E7252A] text-white">01. Lanches</button>
+                    <button onclick="showTab(event, 'tab-bebidas')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">02. Bebidas</button>
+                    <button onclick="showTab(event, 'tab-porcoes')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">03. Porções</button>
+                    <button onclick="showTab(event, 'tab-especiais')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">04. Especiais</button>
+                    <button onclick="showTab(event, 'tab-baurus')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">05. Baurus</button>
+                    <button onclick="showTab(event, 'tab-hotdogs')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">06. Hot-Dogs</button>
+                    <button onclick="showTab(event, 'tab-torradas')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">07. Torradas</button>
+                    <button onclick="showTab(event, 'tab-combos')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">08. Combos</button>
+                    <button onclick="showTab(event, 'tab-doces')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">09. Doces</button>
+                    <button onclick="showTab(event, 'tab-outros')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">10. Outros</button>
                 </div>
 
                 <div class="max-h-[300px] overflow-y-auto no-scrollbar font-bold italic">
                     <div id="tab-lanches" class="tab-content grid grid-cols-1 gap-2">
-                        <button onclick="selectItem('Xis Salada', 18.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Xis Salada <span>R$ 18,00</span></button>
-                        <button onclick="selectItem('Xis Tudo', 25.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Xis Tudo <span>R$ 25,00</span></button>
+                        <button onclick="selectItem('01 - Xis Salada', 18.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50 text-sm">01 - Xis Salada <span>R$ 18,00</span></button>
+                        <button onclick="selectItem('02 - Xis Tudo', 25.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50 text-sm">02 - Xis Tudo <span>R$ 25,00</span></button>
                     </div>
 
                     <div id="tab-bebidas" class="tab-content hidden grid grid-cols-1 gap-2">
-                        <button onclick="selectItem('Coca-Cola Lata', 6.00, 'bebida')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Coca-Cola Lata <span>R$ 6,00</span></button>
+                        <button onclick="selectItem('Coca-Cola Lata', 6.00, 'bebida')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50 text-sm">Coca-Cola Lata <span>R$ 6,00</span></button>
                     </div>
 
                     <div id="tab-porcoes" class="tab-content hidden grid grid-cols-1 gap-2">
-                        <button onclick="selectItem('Porção Mix', 45.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Porção Mix <span>R$ 45,00</span></button>
+                         <p class="text-center text-gray-300 py-10">Adicione itens de Porções aqui...</p>
                     </div>
+                    <div id="tab-especiais" class="tab-content hidden grid grid-cols-1 gap-2"></div>
+                    <div id="tab-baurus" class="tab-content hidden grid grid-cols-1 gap-2"></div>
+                    <div id="tab-hotdogs" class="tab-content hidden grid grid-cols-1 gap-2"></div>
+                    <div id="tab-torradas" class="tab-content hidden grid grid-cols-1 gap-2"></div>
+                    <div id="tab-combos" class="tab-content hidden grid grid-cols-1 gap-2"></div>
+                    <div id="tab-doces" class="tab-content hidden grid grid-cols-1 gap-2"></div>
+                    <div id="tab-outros" class="tab-content hidden grid grid-cols-1 gap-2"></div>
                 </div>
-            </div> <div id="step3" class="step text-center">
+            </div>
+
+            <div id="step3" class="step text-center">
                 <p class="font-bold mb-2 text-lg italic uppercase">Item: <span id="itemNome" class="text-[#E7252A]"></span></p>
                 <div class="flex items-center justify-center gap-6 mb-6">
                     <button onclick="updateQty(-1)" class="bg-gray-100 w-12 h-12 rounded-full font-black text-xl border border-gray-200">-</button>
@@ -92,9 +108,7 @@
                 <input type="text" id="rua" class="w-full bg-gray-50 border-2 border-gray-200 p-4 rounded-2xl mb-2 font-bold outline-none focus:border-[#E7252A]" placeholder="Rua e Número">
                 <input type="text" id="ponto" class="w-full bg-gray-50 border-2 border-gray-200 p-4 rounded-2xl mb-4 font-bold outline-none focus:border-[#E7252A]" placeholder="Ref / Apto">
                 <div class="grid grid-cols-1 gap-2 max-h-[150px] overflow-y-auto no-scrollbar">
-                    <p class="text-[#E7252A] font-black text-xs uppercase italic mb-2 blink text-center">
-    ⚠️ Selecione o seu bairro abaixo:
-</p>
+                    <p class="text-[#E7252A] font-black text-xs uppercase italic mb-2 blink text-center">⚠️ Selecione o bairro abaixo:</p>
                     <button onclick="selectBairro('Azenha', 9.00)" class="btn-option p-3 rounded-xl font-bold flex justify-between bg-gray-50 text-sm italic">Azenha <span>+R$ 9,00</span></button>
                     <button onclick="selectBairro('Centro', 11.00)" class="btn-option p-3 rounded-xl font-bold flex justify-between bg-gray-50 text-sm italic">Centro <span>+R$ 11,00</span></button>
                     <button onclick="selectBairro('Retirada', 0.00)" class="btn-option p-3 rounded-xl font-bold text-green-600 bg-green-50 text-sm italic">Vou Retirar no Local</button>
@@ -117,16 +131,12 @@
 
     <div id="modalExtras" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-[2rem] p-6 max-h-[80vh] flex flex-col relative">
-            
             <button onclick="fecharModalExtras()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
-
             <h3 class="font-black italic uppercase text-center mb-1 text-[#E7252A]">Adicionais Extras</h3>
-<p id="feedbackExtras" class="text-[10px] text-center font-bold text-gray-500 mb-4 italic">Nenhum extra selecionado</p>
-            
+            <p id="feedbackExtras" class="text-[10px] text-center font-bold text-gray-500 mb-4 italic">Nenhum extra selecionado</p>
             <div id="listaExtrasOpcoes" class="grid grid-cols-2 gap-2 overflow-y-auto no-scrollbar mb-6 p-1"></div>
-            
             <div class="grid grid-cols-1 gap-2">
                 <button onclick="fecharModalExtras()" class="w-full bg-[#E7252A] text-white py-4 rounded-2xl font-black uppercase shadow-md">Confirmar Extras</button>
                 <button onclick="cancelarExtras()" class="w-full bg-gray-100 text-gray-500 py-2 rounded-xl font-bold uppercase text-xs">Cancelar</button>
@@ -139,28 +149,10 @@
         let carrinho = [];
         let tempItem = { nome: '', preco: 0, qty: 1, tipo: '', extras: [] };
         window.currentStep = 1;
-       function cancelarExtras() {
-    tempItem.extras = []; // Limpa a lista
-    
-    // Reseta visualmente os botões
-    document.querySelectorAll('.btn-extra').forEach(b => {
-        b.classList.remove('bg-red-50', 'border-[#E7252A]');
-    });
-    
-    // Reseta o texto de feedback
-    const feedback = document.getElementById('feedbackExtras');
-    if (feedback) feedback.innerText = "Nenhum extra selecionado";
 
-    fecharModalExtras();
-}
-
-        // Lista de extras do arquivo Adicionar 
         const LISTA_EXTRAS = [
-            { n: "Alcaparras", p: 6.00 }, { n: "Aspargos", p: 6.00 }, { n: "Alface", p: 6.00 },
-            { n: "Azeitona", p: 6.00 }, { n: "Bacon", p: 6.00 }, { n: "Cebola", p: 6.00 },
-            { n: "Ervilha", p: 6.00 }, { n: "Milho", p: 6.00 }, { n: "Ovo", p: 3.00 },
-            { n: "Palmito", p: 6.00 }, { n: "Tomate", p: 6.00 }, { n: "Tomates secos", p: 6.00 },
-            { n: "Catupiri", p: 6.00 }, { n: "Cheddar", p: 6.00 }, { n: "Provolone", p: 6.00 }, { n: "Queijo", p: 6.00 }
+            { n: "Bacon", p: 6.00 }, { n: "Queijo", p: 6.00 }, { n: "Ovo", p: 3.00 }, { n: "Cebola", p: 6.00 },
+            { n: "Ervilha", p: 6.00 }, { n: "Milho", p: 6.00 }, { n: "Alface", p: 6.00 }, { n: "Tomate", p: 6.00 }
         ];
 
         window.onload = () => {
@@ -206,30 +198,17 @@
             tempItem = { nome, preco, qty: 1, tipo, extras: [] };
             document.getElementById('itemNome').innerText = nome;
             document.getElementById('qty').innerText = 1;
-            document.getElementById('itemObs').value = ''; // Limpa observação
+            document.getElementById('itemObs').value = '';
             document.getElementById('btnExtra').classList.toggle('hidden', tipo === 'bebida');
-            document.getElementById('itemObs').placeholder = (tipo === 'bebida') ? "Ex: Gelada, com gelo..." : "Ex: Sem cebola, maionese à parte...";
-            
-            // Reseta cores dos extras no modal
             document.querySelectorAll('.btn-extra').forEach(b => b.classList.remove('bg-red-50', 'border-[#E7252A]'));
             goStep(3);
         }
 
-function updateQty(v) {
-    tempItem.qty = Math.max(1, tempItem.qty + v);
-    document.getElementById('qty').innerText = tempItem.qty;
-    
-    const campoObs = document.getElementById('itemObs');
-    
-    // Se não for bebida e a quantidade for maior que 1, muda o texto
-    if (tempItem.tipo !== 'bebida') {
-        if (tempItem.qty > 1) {
-            campoObs.placeholder = "Você pediu " + tempItem.qty + " itens. Por favor, especifique cada um (Ex: O primeiro sem cebola, o segundo completo...)";
-        } else {
-            campoObs.placeholder = "Ex: Sem cebola, maionese à parte...";
+        function updateQty(v) {
+            tempItem.qty = Math.max(1, tempItem.qty + v);
+            document.getElementById('qty').innerText = tempItem.qty;
         }
-    }
-}
+
         function addToCart() {
             const exCusto = tempItem.extras.reduce((s, e) => s + e.p, 0);
             const exNomes = tempItem.extras.map(e => e.n).join(', ');
@@ -239,22 +218,17 @@ function updateQty(v) {
         }
 
         function renderCarrinho() {
-    const c = document.getElementById('listaCarrinho');
-    c.innerHTML = carrinho.map((item, i) => {
-        // Cria a linha de extras se houver algum
-        const linhaExtras = item.extrasStr ? `<p class="text-[10px] text-orange-600 font-bold uppercase">+ EXTRAS: ${item.extrasStr}</p>` : '';
-        
-        return `
-            <div onclick="removeItem(${i})" class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-sm flex justify-between items-center mb-2">
-                <div class="text-left">
-                    <p class="font-bold">${item.qty}x ${item.nome} <span class="text-[#E7252A]">R$ ${(item.totalUnit * item.qty).toFixed(2).replace('.',',')}</span></p>
-                    ${linhaExtras}
-                    <p class="text-[10px] text-gray-400 italic">Obs: ${item.obs}</p>
-                </div>
-                <span class="text-red-500 font-black text-[10px] ml-2">REMOVER</span>
-            </div>`;
-    }).join('');
-}
+            const c = document.getElementById('listaCarrinho');
+            c.innerHTML = carrinho.map((item, i) => `
+                <div onclick="removeItem(${i})" class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-sm flex justify-between items-center mb-2">
+                    <div class="text-left">
+                        <p class="font-bold">${item.qty}x ${item.nome} <span class="text-[#E7252A]">R$ ${(item.totalUnit * item.qty).toFixed(2).replace('.',',')}</span></p>
+                        ${item.extrasStr ? '<p class="text-[10px] text-orange-600 font-bold uppercase">+ EXTRAS: '+item.extrasStr+'</p>' : ''}
+                        <p class="text-[10px] text-gray-400 italic">Obs: ${item.obs}</p>
+                    </div>
+                    <span class="text-red-500 font-black text-[10px] ml-2">REMOVER</span>
+                </div>`).join('');
+        }
 
         function removeItem(i) { if(confirm("Remover?")) { carrinho.splice(i,1); renderCarrinho(); if(!carrinho.length) goStep(2); } }
 
@@ -276,153 +250,58 @@ function updateQty(v) {
                 </button>`).join('');
         }
 
-       function toggleExtra(n, p) {
-    const idx = tempItem.extras.findIndex(e => e.n === n);
-    const btn = document.getElementById(`ex-${n}`);
-    const feedback = document.getElementById('feedbackExtras');
-
-    if(idx > -1) { 
-        tempItem.extras.splice(idx,1); 
-        btn.classList.remove('bg-red-50', 'border-[#E7252A]'); 
-    }
-    else { 
-        tempItem.extras.push({n, p}); 
-        btn.classList.add('bg-red-50', 'border-[#E7252A]'); 
-    }
-
-    // Atualiza o texto de aviso no modal
-    if(tempItem.extras.length > 0) {
-        const nomes = tempItem.extras.map(e => e.n).join(', ');
-        feedback.innerHTML = `<span class="text-green-600">Adicionado: ${nomes}</span>`;
-    } else {
-        feedback.innerText = "Nenhum extra selecionado";
-    }
-}
-
-       function abrirModalExtras() { 
-    // Limpa o texto de feedback para começar do zero
-    const feedback = document.getElementById('feedbackExtras');
-    if (feedback) {
-        feedback.innerText = "Nenhum extra selecionado";
-        feedback.classList.remove('text-green-600');
-        feedback.classList.add('text-gray-500');
-    }
-    document.getElementById('modalExtras').classList.remove('hidden'); 
-}
-
-function fecharModalExtras() { 
-    document.getElementById('modalExtras').classList.add('hidden'); 
-}
-
-       function finishOrder(pag) {
-    let subtotal = carrinho.reduce((s, i) => s + (i.totalUnit * i.qty), 0);
-    let total = subtotal + userData.taxa;
-    let infoPag = pag;
-    let valorTroco = "";
-
-    if(pag === 'Dinheiro') {
-        valorTroco = prompt(`Total: R$ ${total.toFixed(2).replace('.',',')}\nTroco para quanto? (Deixe vazio se não precisar)`);
-    } else if(pag === 'Cartão') {
-        const cardNum = prompt("QUAL A BANDEIRA?\n1-Visa\n2-Master\n3-Elo\n4-Banri\n5-Hiper\nDigite o número:");
-        let bandeira = "";
-        if(cardNum === "1") bandeira = "Visa";
-        else if(cardNum === "2") bandeira = "Master";
-        else if(cardNum === "3") bandeira = "Elo";
-        else if(cardNum === "4") bandeira = "Banri";
-        else if(cardNum === "5") bandeira = "Hiper";
-        else if(cardNum) bandeira = cardNum;
-        if(bandeira) infoPag += ` (${bandeira})`;
-    }
-
-    let itensMsg = carrinho.map(i => {
-        return `> *${i.qty}x ${i.nome}*${i.extrasStr ? '\n  Extras: ' + i.extrasStr : ''}\n  Obs: ${i.obs}`;
-    }).join('\n\n');
-
-    // --- LÓGICA DE RETIRADA VS ENTREGA ---
-    let eRetirada = (userData.bairro === 'Retirada' || userData.bairro === 'RETIRADA');
-    
-    // Título muda drasticamente se for retirada
-    let titulo = eRetirada ? `*--- [ RETIRADA NO BALCÃO ] ---*` : `*NOVO PEDIDO: ${userData.nome.toUpperCase()} (${userData.bairro.toUpperCase()})*`;
-    
-    let msg = `${titulo}\n`;
-    msg += `------------------------------------------\n`;
-    msg += `*CLIENTE:* ${userData.nome}\n`;
-    msg += `*CONTATO:* ${userData.tel}\n`;
-    
-    // Se for entrega, mostra bairro e endereço. Se for retirada, pula isso.
-    if(!eRetirada) {
-        msg += `*BAIRRO:* ${userData.bairro}\n`;
-        msg += `*END:* ${userData.rua}\n`;
-        msg += `*REF:* ${userData.ponto || '-'}\n`;
-    }
-    
-    msg += `------------------------------------------\n\n${itensMsg}\n\n`;
-    msg += `------------------------------------------\n`;
-    
-    if(!eRetirada) {
-        msg += `*TAXA:* R$ ${userData.taxa.toFixed(2).replace('.',',')}\n`;
-    } else {
-        msg += `*TIPO:* RETIRADA NO BALCÃO\n`;
-    }
-    
-    msg += `------------------------------------------\n`;
-    msg += `*PAGAMENTO:* ${infoPag}\n*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*`;
-    if(valorTroco) msg += `\n*TROCO PARA: R$ ${valorTroco}*`;
-    
-    window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
-}
-
-        // FUNÇÕES DE APOIO CORRIGIDAS
-        function chamarAtendenteExtra() {
-            if(confirm("Deseja falar com o atendente para adicionar itens extras?")) {
-                window.open(`https://wa.me/5551992141406?text=Olá! Quero adicionar itens extras ao meu pedido.`);
-            }
-        } // <--- CHAVE QUE ESTAVA FALTANDO AQUI!
-
-        function clearMemory() { 
-            if(confirm("Apagar dados?")) { 
-                localStorage.clear(); 
-                location.reload(); 
-            } 
+        function toggleExtra(n, p) {
+            const idx = tempItem.extras.findIndex(e => e.n === n);
+            const btn = document.getElementById(`ex-${n}`);
+            const feedback = document.getElementById('feedbackExtras');
+            if(idx > -1) { tempItem.extras.splice(idx,1); btn.classList.remove('bg-red-50', 'border-[#E7252A]'); }
+            else { tempItem.extras.push({n, p}); btn.classList.add('bg-red-50', 'border-[#E7252A]'); }
+            feedback.innerHTML = tempItem.extras.length > 0 ? `<span class="text-green-600">Adicionado: ${tempItem.extras.map(e => e.n).join(', ')}</span>` : "Nenhum extra selecionado";
         }
+
+        function abrirModalExtras() { 
+            const feedback = document.getElementById('feedbackExtras');
+            feedback.innerText = "Nenhum extra selecionado";
+            feedback.classList.remove('text-green-600');
+            document.getElementById('modalExtras').classList.remove('hidden'); 
+        }
+        function fecharModalExtras() { document.getElementById('modalExtras').classList.add('hidden'); }
+        function cancelarExtras() { tempItem.extras = []; document.querySelectorAll('.btn-extra').forEach(b => b.classList.remove('bg-red-50', 'border-[#E7252A]')); fecharModalExtras(); }
+
         function showTab(e, id) {
-        // 1. Esconde todos os conteúdos de abas
-        document.querySelectorAll('.tab-content').forEach(c => {
-            c.classList.add('hidden');
-        });
-
-        // 2. Mostra a aba que foi clicada
-        const target = document.getElementById(id);
-        if (target) {
-            target.classList.remove('hidden');
-        }
-
-        // 3. Reseta a cor de todos os botões
-        document.querySelectorAll('.tab-btn').forEach(b => {
-            b.classList.remove('bg-[#E7252A]', 'text-white');
-            b.classList.add('text-gray-500');
-        });
-
-        // 4. Pinta de vermelho o botão atual
-        if (e && e.currentTarget) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            const target = document.getElementById(id);
+            if (target) target.classList.remove('hidden');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('bg-[#E7252A]', 'text-white'));
             e.currentTarget.classList.add('bg-[#E7252A]', 'text-white');
-            e.currentTarget.classList.remove('text-gray-500');
         }
-    }
 
-    // --- FUNÇÕES DE APOIO ---
-    function chamarAtendenteExtra() {
-        if(confirm("Deseja falar com o atendente para adicionar itens extras?")) {
-            window.open(`https://wa.me/5551992141406?text=Olá! Quero adicionar itens extras ao meu pedido.`);
+        function finishOrder(pag) {
+            let subtotal = carrinho.reduce((s, i) => s + (i.totalUnit * i.qty), 0);
+            let total = subtotal + userData.taxa;
+            let infoPag = pag;
+            if(pag === 'Dinheiro') {
+                const troco = prompt(`Total: R$ ${total.toFixed(2)}\nTroco para quanto?`);
+                if(troco) infoPag += ` (Troco para R$ ${troco})`;
+            } else if(pag === 'Cartão') {
+                const card = prompt("1-Visa, 2-Master, 3-Elo...");
+                if(card) infoPag += ` (${card})`;
+            }
+
+            let eRetirada = (userData.bairro === 'Retirada');
+            let titulo = eRetirada ? `*--- [ RETIRADA NO BALCÃO ] ---*` : `*NOVO PEDIDO: ${userData.nome.toUpperCase()} (${userData.bairro.toUpperCase()})*`;
+            let itensMsg = carrinho.map(i => `> *${i.qty}x ${i.nome}*${i.extrasStr ? '\n  Extras: ' + i.extrasStr : ''}\n  Obs: ${i.obs}`).join('\n\n');
+
+            let msg = `${titulo}\n------------------------------------------\n*CLIENTE:* ${userData.nome}\n*CONTATO:* ${userData.tel}\n`;
+            if(!eRetirada) msg += `*BAIRRO:* ${userData.bairro}\n*END:* ${userData.rua}\n*REF:* ${userData.ponto || '-'}\n`;
+            msg += `------------------------------------------\n\n${itensMsg}\n\n------------------------------------------\n`;
+            if(!eRetirada) msg += `*TAXA:* R$ ${userData.taxa.toFixed(2).replace('.',',')}\n`;
+            msg += `------------------------------------------\n*PAGAMENTO:* ${infoPag}\n*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*`;
+            
+            window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
         }
-    }
 
-    function clearMemory() { 
-        if(confirm("Apagar dados?")) { 
-            localStorage.clear(); 
-            location.reload(); 
-        } 
-    }
-</script>
+        function clearMemory() { if(confirm("Apagar dados?")) { localStorage.clear(); location.reload(); } }
+    </script>
 </body>
 </html>
