@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Agápio Lanches - Template Mestre</title>
+    <title>Agápio Lanches - Pedido</title>
+    <link rel="icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjqFTznbj8hGOxa8oY7w9On6zmw6VmW6y4kr1lo4M7YG3vNgAVk7PlnlSHjpRanOwBTt8Cf6wvdDkHtBGRIymydYivyhV8d5RxIu-g4gMsqY2i77rRFVYDf25L9IYgPQS5axqc1hNWX_4_tvupmqH37dImY8h57iFPvDoa6x3kDZE2rKfYLjeLutb1BPcU/s1600/A2.png" type="image/png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-        .blink { animation: blink 1s infinite; }
+        @keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+.blink { animation: blink 1s infinite; }
         .step { display: none; }
         .step.active { display: block; animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* CSS PARA SLIDER DE CATEGORIAS */
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
         .btn-option { border: 2px solid #f3f4f6; transition: 0.2s; }
         .btn-option:active { border-color: #E7252A; transform: scale(0.98); }
     </style>
@@ -42,55 +43,45 @@
             </div>
 
             <div id="step2" class="step">
-                <p class="font-bold text-center italic text-[10px] mb-2 text-gray-400 uppercase">Arraste para o lado para ver mais categorias ➔</p>
+                <p class="font-bold text-center italic text-sm mb-4">O que vamos pedir hoje?</p>
                 
-                <div class="relative flex items-center group mb-4">
-    <button onclick="sideScroll('scrollContainer', 'left')" class="absolute left-0 z-10 bg-white/80 shadow-md rounded-full p-1 hover:bg-white hidden md:block border border-gray-200">
-        <svg class="w-5 h-5 text-[#E7252A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
-    </button>
+                <div class="flex gap-1 mb-4 bg-gray-100 p-1 rounded-xl">
+                    <button onclick="showTab(event, 'tab-lanches')" class="tab-btn flex-1 py-2 text-[10px] font-black uppercase italic rounded-lg bg-[#E7252A] text-white">Lanches</button>
+                    <button onclick="showTab(event, 'tab-especiais')" class="tab-btn flex-1 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">Especiais</button>
+                    <button onclick="showTab(event, 'tab-bebidas')" class="tab-btn flex-1 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">Bebidas</button>
 
-    <div id="scrollContainer" class="flex gap-2 bg-gray-100 p-1 rounded-xl overflow-x-auto no-scrollbar flex-nowrap shadow-inner scroll-smooth w-full">
-        <button onclick="showTab(event, 'tab-lanches')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg bg-[#E7252A] text-white">01. Lanches</button>
-        <button onclick="showTab(event, 'tab-bebidas')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">02. Bebidas</button>
-        <button onclick="showTab(event, 'tab-porcoes')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">03. Porções</button>
-        <button onclick="showTab(event, 'tab-especiais')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">04. Especiais</button>
-        <button onclick="showTab(event, 'tab-baurus')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">05. Baurus</button>
-        <button onclick="showTab(event, 'tab-hotdogs')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">06. Hot-Dogs</button>
-        <button onclick="showTab(event, 'tab-torradas')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">07. Torradas</button>
-        <button onclick="showTab(event, 'tab-combos')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">08. Combos</button>
-        <button onclick="showTab(event, 'tab-doces')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">09. Doces</button>
-        <button onclick="showTab(event, 'tab-outros')" class="tab-btn whitespace-nowrap px-6 py-2 text-[10px] font-black uppercase italic rounded-lg text-gray-500">10. Outros</button>
-    </div>
-
-    <button onclick="sideScroll('scrollContainer', 'right')" class="absolute right-0 z-10 bg-white/80 shadow-md rounded-full p-1 hover:bg-white hidden md:block border border-gray-200">
-        <svg class="w-5 h-5 text-[#E7252A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
-    </button>
-</div>
+                </div>
 
                 <div class="max-h-[300px] overflow-y-auto no-scrollbar font-bold italic">
                     <div id="tab-lanches" class="tab-content grid grid-cols-1 gap-2">
-                        <button onclick="selectItem('01 - Xis Salada', 18.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50 text-sm">01 - Xis Salada <span>R$ 18,00</span></button>
-                        <button onclick="selectItem('02 - Xis Tudo', 25.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50 text-sm">02 - Xis Tudo <span>R$ 25,00</span></button>
+                        <button onclick="selectItem('Xis Salada', 18.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Xis Salada <span>R$ 18,00</span></button>
+                        <button onclick="selectItem('Xis Misto', 27.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Xis Misto <span>R$ 27,00</span></button>
+                        <button onclick="selectItem('Xis da casa', 24.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Xis da casa <span>R$ 24,00</span></button>
+                        <button onclick="selectItem('Xis Bacon', 25.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Xis Bacon <span>R$ 25,00</span></button>
+
+
+                    </div>
+
+                    <div id="tab-especiais" class="tab-content hidden grid grid-cols-1 gap-2">
+                        <button onclick="selectItem('Xis Frango com Catupiry', 25.90, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Xis Frango com Catupiry <span>R$ 25,90</span></button>
+                        <button onclick="selectItem('Xis Frango a Punta Del Leste', 32.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Xis Frango a Punta Del Leste <span>R$ 32,00</span></button>
+                        <button onclick="selectItem('Xis Gaúcho', 25.90, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Xis Gaúcho <span>R$ 25,90</span></button>
+                        <button onclick="selectItem('Xis Contrafilé', 28.00, 'lanche')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Xis Contrafilé <span>R$ 28,00</span></button>
+
                     </div>
 
                     <div id="tab-bebidas" class="tab-content hidden grid grid-cols-1 gap-2">
-                        <button onclick="selectItem('Coca-Cola Lata', 6.00, 'bebida')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50 text-sm">Coca-Cola Lata <span>R$ 6,00</span></button>
-                    </div>
+						<button onclick="selectItem('Coca-Cola Lata', 5.00, 'bebida')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Coca-Cola Lata <span>R$ 5,00</span></button>
+						<button onclick="selectItem('Coca-Cola 600 ml', 7.00, 'bebida')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Coca-Cola 600 ml <span>R$ 7,00</span></button>
+                        <button onclick="selectItem('Coca 2 litros', 12.00, 'bebida')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Coca 2 litros <span>R$ 12,00</span></button>
+                        <button onclick="selectItem('Cerveja Latão', 8.00, 'bebida')" class="btn-option p-4 rounded-xl flex justify-between bg-gray-50">Cerveja Latão <span>R$ 8,00</span></button>
 
-                    <div id="tab-porcoes" class="tab-content hidden grid grid-cols-1 gap-2">
-                         <p class="text-center text-gray-300 py-10">Adicione itens de Porções aqui...</p>
+
+
+
                     </div>
-                    <div id="tab-especiais" class="tab-content hidden grid grid-cols-1 gap-2"></div>
-                    <div id="tab-baurus" class="tab-content hidden grid grid-cols-1 gap-2"></div>
-                    <div id="tab-hotdogs" class="tab-content hidden grid grid-cols-1 gap-2"></div>
-                    <div id="tab-torradas" class="tab-content hidden grid grid-cols-1 gap-2"></div>
-                    <div id="tab-combos" class="tab-content hidden grid grid-cols-1 gap-2"></div>
-                    <div id="tab-doces" class="tab-content hidden grid grid-cols-1 gap-2"></div>
-                    <div id="tab-outros" class="tab-content hidden grid grid-cols-1 gap-2"></div>
                 </div>
-            </div>
-
-            <div id="step3" class="step text-center">
+            </div> <div id="step3" class="step text-center">
                 <p class="font-bold mb-2 text-lg italic uppercase">Item: <span id="itemNome" class="text-[#E7252A]"></span></p>
                 <div class="flex items-center justify-center gap-6 mb-6">
                     <button onclick="updateQty(-1)" class="bg-gray-100 w-12 h-12 rounded-full font-black text-xl border border-gray-200">-</button>
@@ -113,40 +104,70 @@
                 </div>
             </div>
 
-            <div id="step4" class="step">
-                <p class="font-bold text-sm italic mb-4 text-center">Onde entregamos?</p>
-                <input type="text" id="rua" class="w-full bg-gray-50 border-2 border-gray-200 p-4 rounded-2xl mb-2 font-bold outline-none focus:border-[#E7252A]" placeholder="Rua e Número">
-                <input type="text" id="ponto" class="w-full bg-gray-50 border-2 border-gray-200 p-4 rounded-2xl mb-4 font-bold outline-none focus:border-[#E7252A]" placeholder="Ref / Apto">
-                <div class="grid grid-cols-1 gap-2 max-h-[150px] overflow-y-auto no-scrollbar">
-                    <p class="text-[#E7252A] font-black text-xs uppercase italic mb-2 blink text-center">⚠️ Selecione o bairro abaixo:</p>
+           <div id="step4" class="step">
+    <p class="font-bold text-sm italic mb-4 text-center">Onde entregamos?</p>
+    <input type="text" id="rua" class="w-full bg-gray-50 border-2 border-gray-200 p-4 rounded-2xl mb-2 font-bold outline-none focus:border-[#E7252A]" placeholder="Rua e Número">
+    <input type="text" id="ponto" class="w-full bg-gray-50 border-2 border-gray-200 p-4 rounded-2xl mb-4 font-bold outline-none focus:border-[#E7252A]" placeholder="Ref / Apto">
+    
+    <div class="bg-amber-50 border-l-4 border-amber-400 p-3 mb-4 rounded-r-xl">
+        <p class="text-[10px] text-amber-700 font-bold italic leading-tight uppercase">
+            ⚠️ O bairro informado será conferido no Google Maps pela lancheria. Caso haja divergência na taxa, entraremos em contato.
+        </p>
+    </div>
+    <div class="grid grid-cols-1 gap-2 max-h-[150px] overflow-y-auto no-scrollbar">
+    ⚠️ Selecione o seu bairro abaixo:
+</p>
                     <button onclick="selectBairro('Azenha', 9.00)" class="btn-option p-3 rounded-xl font-bold flex justify-between bg-gray-50 text-sm italic">Azenha <span>+R$ 9,00</span></button>
+                    <button onclick="selectBairro('Menino Deus', 8.00)" class="btn-option p-3 rounded-xl font-bold flex justify-between bg-gray-50 text-sm italic">Menino Deus <span>+R$ 8,00</span></button>
                     <button onclick="selectBairro('Centro', 11.00)" class="btn-option p-3 rounded-xl font-bold flex justify-between bg-gray-50 text-sm italic">Centro <span>+R$ 11,00</span></button>
+                    <button onclick="selectBairro('Santana', 12.00)" class="btn-option p-3 rounded-xl font-bold flex justify-between bg-gray-50 text-sm italic">Santana <span>+R$ 12,00</span></button>
                     <button onclick="selectBairro('Retirada', 0.00)" class="btn-option p-3 rounded-xl font-bold text-green-600 bg-green-50 text-sm italic">Vou Retirar no Local</button>
                 </div>
             </div>
 
-            <div id="step5" class="step text-center">
-                <p class="font-bold mb-4 italic text-sm">Forma de Pagamento:</p>
-                <div class="grid grid-cols-1 gap-2 mb-4">
-                    <button onclick="finishOrder('Pix')" class="btn-option p-3 rounded-xl bg-gray-50 font-bold italic">Pix</button>
-                    <button onclick="finishOrder('Cartão')" class="btn-option p-3 rounded-xl bg-gray-50 font-bold italic">Cartão (Máquina)</button>
-                    <button onclick="finishOrder('Dinheiro')" class="btn-option p-3 rounded-xl bg-gray-50 font-bold italic">Dinheiro</button>
-                </div>
-                <div class="p-4 bg-gray-50 rounded-2xl border-2 border-[#E7252A]">
-                    <div class="flex justify-between text-xl font-black text-[#E7252A] italic uppercase"><span>TOTAL:</span><span id="resumoTotal">R$ 0,00</span></div>
-                </div>
-            </div>
+           <div id="step5" class="step text-center">
+    <p id="tituloPagamento" class="font-bold mb-4 italic text-sm">Forma de Pagamento:</p>
+    
+    <div id="opcoesPagamento" class="grid grid-cols-1 gap-2 mb-4">
+        <button onclick="finishOrder('Pix')" class="btn-option p-3 rounded-xl bg-gray-50 font-bold italic">Pix</button>
+        <button onclick="finishOrder('Cartão')" class="btn-option p-3 rounded-xl bg-gray-50 font-bold italic">Cartão (Máquina)</button>
+        <button onclick="finishOrder('Dinheiro')" class="btn-option p-3 rounded-xl bg-gray-50 font-bold italic">Dinheiro</button>
+    </div>
+
+    <div class="p-4 bg-gray-50 rounded-2xl border-2 border-[#E7252A] mb-4">
+        <div class="flex justify-between text-xl font-black text-[#E7252A] italic uppercase">
+            <span>TOTAL:</span>
+            <span id="resumoTotal">R$ 0,00</span>
         </div>
     </div>
+    <p class="text-[9px] text-gray-400 font-bold uppercase italic mb-4">
+        *Sujeito a conferência de bairro e taxa de entrega.
+    </p>
+
+    <div id="containerConfirmacao" class="hidden">
+        <button id="btnEnviarWhatsapp" class="w-full bg-green-600 text-white py-5 rounded-2xl font-black uppercase shadow-xl flex items-center justify-center gap-2 animate-bounce">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.445 0 .081 5.391.079 11.99c0 2.108.552 4.165 1.597 6.02L0 24l6.145-1.611a11.81 11.81 0 005.897 1.573h.006c6.604 0 11.968-5.391 11.97-11.991a11.817 11.817 0 00-3.515-8.452z"/></svg>
+            CONFIRMAR NO WHATSAPP
+        </button>
+<button onclick="resetPayment()" class="mt-4 text-[10px] text-gray-400 underline uppercase font-bold">
+    Escolher outra forma de pagamento
+</button>    </div>
+</div>
 
     <div id="modalExtras" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-[2rem] p-6 max-h-[80vh] flex flex-col relative">
+			<h3 class="text-xl font-black italic text-slate-900 text-center uppercase">Adicionais Extras</h3>
+
+<p id="avisoQuantidadeExtras" class="text-[10px] text-red-600 font-bold italic mt-1 text-center leading-tight blink"></p>
+            
             <button onclick="fecharModalExtras()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
-            <h3 class="font-black italic uppercase text-center mb-1 text-[#E7252A]">Adicionais Extras</h3>
+
             <p id="feedbackExtras" class="text-[10px] text-center font-bold text-gray-500 mb-4 italic">Nenhum extra selecionado</p>
+            
             <div id="listaExtrasOpcoes" class="grid grid-cols-2 gap-2 overflow-y-auto no-scrollbar mb-6 p-1"></div>
+            
             <div class="grid grid-cols-1 gap-2">
                 <button onclick="fecharModalExtras()" class="w-full bg-[#E7252A] text-white py-4 rounded-2xl font-black uppercase shadow-md">Confirmar Extras</button>
                 <button onclick="cancelarExtras()" class="w-full bg-gray-100 text-gray-500 py-2 rounded-xl font-bold uppercase text-xs">Cancelar</button>
@@ -154,15 +175,18 @@
         </div>
     </div>
 
-    <script>
+   <script>
         let userData = { nome: '', tel: '', rua: '', ponto: '', bairro: '', taxa: 0 };
         let carrinho = [];
         let tempItem = { nome: '', preco: 0, qty: 1, tipo: '', extras: [] };
         window.currentStep = 1;
 
         const LISTA_EXTRAS = [
-            { n: "Bacon", p: 6.00 }, { n: "Queijo", p: 6.00 }, { n: "Ovo", p: 3.00 }, { n: "Cebola", p: 6.00 },
-            { n: "Ervilha", p: 6.00 }, { n: "Milho", p: 6.00 }, { n: "Alface", p: 6.00 }, { n: "Tomate", p: 6.00 }
+            { n: "Alcaparras", p: 6.00 }, { n: "Aspargos", p: 6.00 }, { n: "Alface", p: 6.00 },
+            { n: "Azeitona", p: 6.00 }, { n: "Bacon", p: 6.00 }, { n: "Cebola", p: 6.00 },
+            { n: "Ervilha", p: 6.00 }, { n: "Milho", p: 6.00 }, { n: "Ovo", p: 3.00 },
+            { n: "Palmito", p: 6.00 }, { n: "Tomate", p: 6.00 }, { n: "Tomates secos", p: 6.00 },
+            { n: "Catupiri", p: 6.00 }, { n: "Cheddar", p: 6.00 }, { n: "Provolone", p: 6.00 }, { n: "Queijo", p: 6.00 }
         ];
 
         window.onload = () => {
@@ -210,6 +234,7 @@
             document.getElementById('qty').innerText = 1;
             document.getElementById('itemObs').value = '';
             document.getElementById('btnExtra').classList.toggle('hidden', tipo === 'bebida');
+            document.getElementById('itemObs').placeholder = (tipo === 'bebida') ? "Ex: Gelada, com gelo..." : "Ex: Sem cebola, maionese à parte...";
             document.querySelectorAll('.btn-extra').forEach(b => b.classList.remove('bg-red-50', 'border-[#E7252A]'));
             goStep(3);
         }
@@ -217,12 +242,28 @@
         function updateQty(v) {
             tempItem.qty = Math.max(1, tempItem.qty + v);
             document.getElementById('qty').innerText = tempItem.qty;
+            const campoObs = document.getElementById('itemObs');
+            if (tempItem.tipo !== 'bebida') {
+                campoObs.placeholder = tempItem.qty > 1 ? `Você pediu ${tempItem.qty} itens. Especifique cada um...` : "Ex: Sem cebola, maionese à parte...";
+            }
         }
 
         function addToCart() {
             const exCusto = tempItem.extras.reduce((s, e) => s + e.p, 0);
             const exNomes = tempItem.extras.map(e => e.n).join(', ');
-            carrinho.push({ ...tempItem, totalUnit: (tempItem.preco + exCusto), obs: document.getElementById('itemObs').value || 'Sem obs', extrasStr: exNomes });
+            
+            // Remove o texto automático de confirmação para não repetir no Whats
+            let observacaoLimpa = document.getElementById('itemObs').value;
+            observacaoLimpa = observacaoLimpa.replace(/Extras selecionados:.*?\.\s?/, "").trim();
+            if (!observacaoLimpa) observacaoLimpa = 'Sem obs';
+
+            carrinho.push({ 
+                ...tempItem, 
+                totalUnit: (tempItem.preco + exCusto), 
+                obs: observacaoLimpa, 
+                extrasStr: exNomes 
+            });
+
             renderCarrinho();
             goStep('Carrinho');
         }
@@ -230,23 +271,30 @@
         function renderCarrinho() {
             const c = document.getElementById('listaCarrinho');
             c.innerHTML = carrinho.map((item, i) => `
-                <div onclick="removeItem(${i})" class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-sm flex justify-between items-center mb-2">
+                <div onclick="removeItem(${i})" class="bg-white p-4 rounded-xl border-2 border-gray-200 text-sm flex justify-between items-center mb-2 shadow-sm">
                     <div class="text-left">
-                        <p class="font-bold">${item.qty}x ${item.nome} <span class="text-[#E7252A]">R$ ${(item.totalUnit * item.qty).toFixed(2).replace('.',',')}</span></p>
-                        ${item.extrasStr ? '<p class="text-[10px] text-orange-600 font-bold uppercase">+ EXTRAS: '+item.extrasStr+'</p>' : ''}
-                        <p class="text-[10px] text-gray-400 italic">Obs: ${item.obs}</p>
+                        <p class="font-black text-slate-950 text-base leading-tight">${item.qty}x ${item.nome} <span class="text-[#E7252A]">R$ ${(item.totalUnit * item.qty).toFixed(2).replace('.',',')}</span></p>
+                        ${item.extrasStr ? `<p class="text-[11px] text-orange-800 font-extrabold uppercase mt-1 tracking-tighter">+ EXTRAS: ${item.extrasStr}</p>` : ''}
+                        <p class="text-[11px] text-slate-800 font-bold italic mt-1">Obs: ${item.obs}</p>
                     </div>
-                    <span class="text-red-500 font-black text-[10px] ml-2">REMOVER</span>
+                    <span class="text-red-600 font-black text-[9px] border border-red-200 px-2 py-1 rounded-lg uppercase">Remover</span>
                 </div>`).join('');
         }
 
-        function removeItem(i) { if(confirm("Remover?")) { carrinho.splice(i,1); renderCarrinho(); if(!carrinho.length) goStep(2); } }
+        function removeItem(i) { 
+            if(confirm("Remover este item?")) { 
+                carrinho.splice(i,1); 
+                renderCarrinho(); 
+                if(!carrinho.length) goStep(2); 
+            } 
+        }
 
         function selectBairro(b, taxa) {
             const r = document.getElementById('rua').value.trim();
-            if(b !== 'Retirada' && !r) return alert("Informe a rua!");
+            if(b !== 'Retirada' && !r) return alert("Informe a rua e número!");
             userData.bairro = b; userData.taxa = taxa; userData.rua = r;
             userData.ponto = document.getElementById('ponto').value;
+            localStorage.setItem('agapio_user', JSON.stringify({nome: userData.nome, tel: userData.tel, rua: r, ponto: userData.ponto}));
             let sub = carrinho.reduce((s, i) => s + (i.totalUnit * i.qty), 0);
             document.getElementById('resumoTotal').innerText = `R$ ${(sub + taxa).toFixed(2).replace('.',',')}`;
             goStep(5);
@@ -255,7 +303,7 @@
         function renderizarOpcoesExtras() {
             const cont = document.getElementById('listaExtrasOpcoes');
             cont.innerHTML = LISTA_EXTRAS.map(e => `
-                <button onclick="toggleExtra('${e.n}', ${e.p})" id="ex-${e.n}" class="btn-extra p-2 border-2 border-gray-100 rounded-xl text-[10px] font-bold bg-white italic">
+                <button onclick="toggleExtra('${e.n}', ${e.p})" id="ex-${e.n}" class="btn-extra p-2 border-2 border-gray-100 rounded-xl text-[10px] font-bold bg-white italic text-slate-800">
                     ${e.n}<br><span class="text-[#E7252A]">R$ ${e.p.toFixed(2)}</span>
                 </button>`).join('');
         }
@@ -264,62 +312,107 @@
             const idx = tempItem.extras.findIndex(e => e.n === n);
             const btn = document.getElementById(`ex-${n}`);
             const feedback = document.getElementById('feedbackExtras');
-            if(idx > -1) { tempItem.extras.splice(idx,1); btn.classList.remove('bg-red-50', 'border-[#E7252A]'); }
-            else { tempItem.extras.push({n, p}); btn.classList.add('bg-red-50', 'border-[#E7252A]'); }
+            if(idx > -1) { 
+                tempItem.extras.splice(idx,1); 
+                btn.classList.remove('bg-red-50', 'border-[#E7252A]'); 
+            } else { 
+                tempItem.extras.push({n, p}); 
+                btn.classList.add('bg-red-50', 'border-[#E7252A]'); 
+            }
             feedback.innerHTML = tempItem.extras.length > 0 ? `<span class="text-green-600">Adicionado: ${tempItem.extras.map(e => e.n).join(', ')}</span>` : "Nenhum extra selecionado";
         }
 
         function abrirModalExtras() { 
-            const feedback = document.getElementById('feedbackExtras');
-            feedback.innerText = "Nenhum extra selecionado";
-            feedback.classList.remove('text-green-600');
             document.getElementById('modalExtras').classList.remove('hidden'); 
         }
-        function fecharModalExtras() { document.getElementById('modalExtras').classList.add('hidden'); }
-        function cancelarExtras() { tempItem.extras = []; document.querySelectorAll('.btn-extra').forEach(b => b.classList.remove('bg-red-50', 'border-[#E7252A]')); fecharModalExtras(); }
 
-        function showTab(e, id) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-            const target = document.getElementById(id);
-            if (target) target.classList.remove('hidden');
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('bg-[#E7252A]', 'text-white'));
-            e.currentTarget.classList.add('bg-[#E7252A]', 'text-white');
+        function fecharModalExtras() { 
+            if (tempItem.extras.length > 0) {
+                const nomesExtras = tempItem.extras.map(e => e.n).join(', ');
+                const campoObs = document.getElementById('itemObs');
+                const textoAtual = campoObs.value.replace(/Extras selecionados:.*?\.\s?/, "");
+                campoObs.value = `Extras selecionados: ${nomesExtras}. ${textoAtual}`;
+            }
+            document.getElementById('modalExtras').classList.add('hidden'); 
+        }
+
+        function cancelarExtras() {
+            tempItem.extras = [];
+            document.querySelectorAll('.btn-extra').forEach(b => b.classList.remove('bg-red-50', 'border-[#E7252A]'));
+            document.getElementById('feedbackExtras').innerText = "Nenhum extra selecionado";
+            document.getElementById('modalExtras').classList.add('hidden');
         }
 
         function finishOrder(pag) {
             let subtotal = carrinho.reduce((s, i) => s + (i.totalUnit * i.qty), 0);
             let total = subtotal + userData.taxa;
             let infoPag = pag;
+            let valorTroco = "";
+
             if(pag === 'Dinheiro') {
-                const troco = prompt(`Total: R$ ${total.toFixed(2)}\nTroco para quanto?`);
-                if(troco) infoPag += ` (Troco para R$ ${troco})`;
+                let entradaTroco = prompt(`Total: R$ ${total.toFixed(2).replace('.',',')}\nTroco para quanto?`);
+                if (entradaTroco) valorTroco = entradaTroco;
             } else if(pag === 'Cartão') {
-                const card = prompt("1-Visa, 2-Master, 3-Elo...");
-                if(card) infoPag += ` (${card})`;
+                const cardNum = prompt("BANDEIRA: 1-Visa, 2-Master, 3-Elo, 4-Banri, 5-Hiper");
+                let bandeiras = {"1":"Visa", "2":"Master", "3":"Elo", "4":"Banri", "5":"Hiper"};
+                infoPag += cardNum ? ` (${bandeiras[cardNum] || cardNum})` : "";
             }
 
+            let itensMsg = carrinho.map(i => `> *${i.qty}x ${i.nome}*${i.extrasStr ? '\n  Extras: ' + i.extrasStr : ''}\n  Obs: ${i.obs}`).join('\n\n');
             let eRetirada = (userData.bairro === 'Retirada');
             let titulo = eRetirada ? `*--- [ RETIRADA NO BALCÃO ] ---*` : `*NOVO PEDIDO: ${userData.nome.toUpperCase()} (${userData.bairro.toUpperCase()})*`;
-            let itensMsg = carrinho.map(i => `> *${i.qty}x ${i.nome}*${i.extrasStr ? '\n  Extras: ' + i.extrasStr : ''}\n  Obs: ${i.obs}`).join('\n\n');
-
+            
             let msg = `${titulo}\n------------------------------------------\n*CLIENTE:* ${userData.nome}\n*CONTATO:* ${userData.tel}\n`;
             if(!eRetirada) msg += `*BAIRRO:* ${userData.bairro}\n*END:* ${userData.rua}\n*REF:* ${userData.ponto || '-'}\n`;
             msg += `------------------------------------------\n\n${itensMsg}\n\n------------------------------------------\n`;
-            if(!eRetirada) msg += `*TAXA:* R$ ${userData.taxa.toFixed(2).replace('.',',')}\n`;
+            msg += eRetirada ? `*TIPO:* RETIRADA NO BALCÃO\n` : `*TAXA:* R$ ${userData.taxa.toFixed(2).replace('.',',')}\n`;
             msg += `------------------------------------------\n*PAGAMENTO:* ${infoPag}\n*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*`;
-            
-            window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`);
+            if(valorTroco) msg += `\n*TROCO PARA: R$ ${valorTroco}*`;
+            msg += `\n\n_Observação: O bairro e a taxa estão sujeitos a conferência pela lancheria via Google Maps._`;
+
+            document.getElementById('opcoesPagamento').classList.add('hidden');
+            document.getElementById('tituloPagamento').innerText = "Tudo pronto!";
+            document.getElementById('containerConfirmacao').classList.remove('hidden');
+
+            document.getElementById('btnEnviarWhatsapp').onclick = () => {
+                window.open(`https://wa.me/5551992141406?text=${encodeURIComponent(msg)}`, '_blank');
+            };
         }
 
-        function clearMemory() { if(confirm("Apagar dados?")) { localStorage.clear(); location.reload(); } }
-        function sideScroll(id, direction) {
-    const container = document.getElementById(id);
-    const scrollAmount = 150; // Quanto ele desliza por clique
-    if (direction === 'left') {
-        container.scrollLeft -= scrollAmount;
+        function resetPayment() {
+            document.getElementById('containerConfirmacao').classList.add('hidden');
+            document.getElementById('opcoesPagamento').classList.remove('hidden');
+            document.getElementById('tituloPagamento').innerText = "Forma de Pagamento:";
+        }
+
+        function clearMemory() { 
+            if(confirm("Apagar dados salvos?")) { localStorage.clear(); location.reload(); } 
+        }
+
+        function showTab(e, id) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('bg-[#E7252A]', 'text-white');
+                b.classList.add('text-gray-500');
+            });
+            e.currentTarget.classList.add('bg-[#E7252A]', 'text-white');
+            e.currentTarget.classList.remove('text-gray-500');
+        }
+        
+        function abrirModalExtras() { 
+    const avisoQty = document.getElementById('avisoQuantidadeExtras');
+
+    if (tempItem.qty > 1) {
+        avisoQty.innerText = `⚠️ Adicione extras separadamente em cada lanche.`;
+        // ADICIONE ESTA LINHA ABAIXO PARA AUMENTAR A FONTE
+        avisoQty.style.fontSize = "20px"; 
+        avisoQty.style.fontWeight = "bold"; // Deixa em negrito para destacar mais
     } else {
-        container.scrollLeft += scrollAmount;
+        avisoQty.innerText = ""; 
     }
+
+    document.getElementById('modalExtras').classList.remove('hidden'); 
 }
     </script>
 </body>
