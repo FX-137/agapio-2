@@ -459,5 +459,12 @@ Consulte taxas e áreas de entrega diretamente com o estabelecimento.`}
 
         render(html`<${App} />`, document.getElementById('root'));
     </script>
+    <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('Service Worker ativo!', reg))
+      .catch(err => console.log('Erro no Service Worker:', err));
+  }
+</script>
 </body>
 </html>
